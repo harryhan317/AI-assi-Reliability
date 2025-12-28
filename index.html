@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>首页 - 可靠性AI助手</title>
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+            background-color: #f8fafd;
+            color: #333;
+            line-height: 1.5;
+            max-width: 390px;
+            margin: 0 auto;
+            min-height: 844px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 科技感装饰元素 */
+        .tech-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 顶部导航栏 - 已优化为居中，添加左侧历史按钮 */
+        .navbar {
+            height: 44px;
+            padding: 0 16px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+            position: relative;
+        }
+        
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .history-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            color: #1890ff;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .history-btn:hover {
+            background: rgba(24, 144, 255, 0.1);
+        }
+        
+        .navbar-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a3a8f;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        /* 对话历史区域 */
+        .chat-history {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: left; /* 改为左对齐 */
+            padding: 40px 24px;
+        }
+        
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 32px;
+            color: #1890ff;
+        }
+        
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 8px;
+            text-align: left;
+            width: 100%;
+        }
+        
+        .empty-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            max-width: 100%;
+            text-align: left; /* 改为左对齐 */
+        }
+        
+        /* 消息气泡 */
+        .message-container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 16px;
+        }
+        
+        .message-user {
+            align-items: flex-end;
+        }
+        
+        .message-ai {
+            align-items: flex-start;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 4px;
+            padding: 0 8px;
+        }
+        
+        .message-bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            line-height: 1.5;
+            font-size: 15px;
+        }
+        
+        .user-bubble {
+            background: #1890ff;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .ai-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #e8e8e8;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* 附件预览 */
+        .attachment-preview {
+            display: flex;
+            align-items: center;
+            background: rgba(24, 144, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 8px;
+            max-width: 85%;
+        }
+        
+        .attachment-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 20px;
+            color: #1890ff;
+        }
+        
+        .attachment-info {
+            flex: 1;
+        }
+        
+        .attachment-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #333;
+        }
+        
+        .attachment-size {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* AI报告卡片 */
+        .report-card {
+            background: linear-gradient(135deg, #f6ffed 0%, #f0f9ff 100%);
+            border: 1px solid rgba(82, 196, 26, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 8px;
+            max-width: 85%;
+        }
+        
+        .report-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .report-icon {
+            width: 24px;
+            height: 24px;
+            background: #52c41a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-size: 12px;
+            color: white;
+        }
+        
+        .report-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1a3a8f;
+        }
+        
+        .report-desc {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .report-download {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-radius: 8px;
+            padding: 10px 12px;
+            border: 1px solid #e8e8e8;
+            cursor: pointer;
+        }
+        
+        .download-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .download-icon {
+            width: 20px;
+            height: 20px;
+            background: #1890ff;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-size: 10px;
+            color: white;
+        }
+        
+        .download-text {
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .download-cost {
+            font-size: 13px;
+            color: #ff4d4f;
+            font-weight: 500;
+        }
+        
+        /* 底部输入区域 */
+        .input-area {
+            background: white;
+            border-top: 1px solid rgba(24, 144, 255, 0.1);
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 附件选择栏 - 已优化为回形针图标 */
+        .attachment-bar {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .attach-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .attach-icon:hover {
+            background: #e6f7ff;
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+        
+        /* 悬停提示 */
+        .tooltip {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .attach-icon:hover .tooltip {
+            opacity: 1;
+        }
+        
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+        }
+        
+        /* 输入框区域 */
+        .input-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+        
+        .text-input {
+            flex: 1;
+            min-height: 44px;
+            max-height: 120px;
+            padding: 12px 16px;
+            font-size: 15px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            color: #333;
+            resize: none;
+            outline: none;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            font-size: 15px; /* 固定字体大小 */
+            line-height: 1.4;
+        }
+        
+        .text-input:focus {
+            border-color: #1890ff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+        }
+        
+        /* 调整placeholder字体大小 */
+        .text-input::placeholder {
+            font-size: 14px; /* 缩小一号 */
+            white-space: nowrap; /* 不换行 */
+            overflow: hidden; /* 隐藏溢出 */
+            text-overflow: ellipsis; /* 显示省略号 */
+        }
+        
+        /* 语音输入按钮 */
+        .voice-btn {
+            width: 44px;
+            height: 44px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #666;
+        }
+        
+        .voice-btn:hover {
+            background: #e6f7ff;
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+        
+        .send-btn {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+        }
+        
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
+        }
+        
+        .send-btn:disabled {
+            background: #d9d9d9;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        /* 已选择附件 */
+        .selected-attachments {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .selected-file {
+            display: flex;
+            align-items: center;
+            background: #e6f7ff;
+            border: 1px solid rgba(24, 144, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #1890ff;
+        }
+        
+        .remove-file {
+            margin-left: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            color: #ff4d4f;
+        }
+        
+        /* 底部导航栏 */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            height: 50px;
+            background-color: #ffffff;
+            display: flex;
+            border-top: 1px solid #e5e5e5;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #999;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .tab-item.active {
+            color: #1890ff;
+        }
+        
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px; /* 图标大小 */
+        }
+        
+        /* 底部导航栏图标 - 使用emoji图标保持一致性 */
+        .home-icon {
+            color: #1890ff; /* 激活状态颜色 */
+        }
+        
+        .resources-icon, .community-icon, .profile-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        /* 滚动条样式 */
+        .chat-history::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .chat-history::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+        
+        .chat-history::-webkit-scrollbar-thumb {
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 2px;
+        }
+        
+        .chat-history::-webkit-scrollbar-thumb:hover {
+            background: rgba(24, 144, 255, 0.3);
+        }
+        
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 50px); /* 减去底部导航栏高度 */
+        }
+        
+        /* 新的AI图标样式 */
+        .ai-assistant-icon {
+            font-size: 32px;
+            color: #1890ff;
+            margin-bottom: 24px;
+        }
+        
+        /* 录音动画效果 */
+        .recording-indicator {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+        
+        .recording-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .recording-text {
+            color: white;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+        
+        /* 文件上传模态框 */
+        .upload-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .upload-modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 320px;
+            max-width: 90%;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .upload-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 20px;
+        }
+        
+        .upload-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .upload-btn {
+            padding: 12px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .upload-btn:hover {
+            background: #e6f7ff;
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .modal-btn.cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        .modal-btn.upload {
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 顶部导航栏 - 已添加左侧历史对话按钮 -->
+        <div class="navbar">
+            <div class="navbar-left">
+                <div class="history-btn" onclick="goToHistory()">📜</div>
+            </div>
+            <div class="navbar-title">可靠性AI助手</div>
+            <div class="user-avatar" onclick="goToProfile()">张</div>
+        </div>
+        
+        <!-- 对话历史区域 -->
+        <div class="chat-history" id="chatHistory">
+            <!-- 初始空状态 -->
+            <div class="empty-state" id="emptyState">
+                <div class="ai-assistant-icon">🤖</div>
+                <div class="empty-title">可靠性AI助手</div>
+                <div class="empty-desc">
+                    我可以帮助您解答电子产品可靠性问题，分析设计文档，解读测试数据和分析报告，提供专业咨询建议。
+                </div>
+            </div>
+            
+            <!-- 示例对话（初始隐藏） -->
+            <div class="message-container message-user" style="display: none;">
+                <div class="message-time">今天 10:30</div>
+                <div class="message-bubble user-bubble">
+                    请分析这个PCB设计的热可靠性问题
+                </div>
+                <div class="attachment-preview">
+                    <div class="attachment-icon">📄</div>
+                    <div class="attachment-info">
+                        <div class="attachment-name">PCB布局图.pdf</div>
+                        <div class="attachment-size">2.4 MB</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="message-container message-ai" style="display: none;">
+                <div class="message-time">今天 10:32</div>
+                <div class="message-bubble ai-bubble">
+                    根据您提供的PCB布局图，我发现了几个可能影响热可靠性的问题：
+                    <br><br>
+                    1. <strong>散热路径不足</strong>：高温芯片周围没有足够的散热孔
+                    <br>
+                    2. <strong>铜箔分布不均</strong>：部分区域铜箔覆盖率低于30%
+                    <br>
+                    3. <strong>热源集中</strong>：多个发热元件集中在PCB同一区域
+                    <br><br>
+                    建议优化措施：
+                    • 增加散热孔数量，特别是在芯片底部
+                    • 优化铜箔分布，确保热传导路径
+                    • 考虑添加散热片或导热垫
+                </div>
+                <div class="report-card">
+                    <div class="report-header">
+                        <div class="report-icon">📊</div>
+                        <div class="report-title">热可靠性分析报告已生成</div>
+                    </div>
+                    <div class="report-desc">
+                        我已为您生成详细的热可靠性分析报告，包含具体改进建议和参考标准。
+                    </div>
+                    <div class="report-download" onclick="downloadReport()">
+                        <div class="download-info">
+                            <div class="download-icon">↓</div>
+                            <div class="download-text">下载分析报告 (PDF)</div>
+                        </div>
+                        <div class="download-cost">-10积分</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部输入区域 -->
+        <div class="input-area">
+            <!-- 已选择附件 -->
+            <div class="selected-attachments" id="selectedAttachments" style="display: none;"></div>
+            
+            <!-- 附件选择栏 - 已优化为回形针图标 -->
+            <div class="attachment-bar">
+                <div class="attach-icon" id="attachIcon">
+                    📎
+                    <div class="tooltip">请添加附件(jpg、PNG、PDF、excel、doc/docx)</div>
+                </div>
+            </div>
+            
+            <!-- 输入框区域 -->
+            <div class="input-container">
+                <button class="voice-btn" id="voiceBtn" onclick="toggleVoiceInput()">🎤</button>
+                <textarea 
+                    class="text-input" 
+                    id="messageInput" 
+                    placeholder="请输入您的可靠性问题和要求..." 
+                    rows="1"
+                    oninput="autoResize(this)"
+                ></textarea>
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="goToIndex()">
+            <div class="tab-icon home-icon">🏠</div>
+            <div>首页</div>
+        </div>
+        <div class="tab-item" onclick="goToResources()">
+            <div class="tab-icon resources-icon">📚</div>
+            <div>资源</div>
+        </div>
+        <div class="tab-item" onclick="goToCommunity()">
+            <div class="tab-icon community-icon">👥</div>
+            <div>社区</div>
+        </div>
+        <div class="tab-item" onclick="goToProfile()">
+            <div class="tab-icon profile-icon">👤</div>
+            <div>我的</div>
+        </div>
+    </div>
+    
+    <!-- 录音指示器 -->
+    <div class="recording-indicator" id="recordingIndicator">
+        <div class="recording-circle">🎤</div>
+        <div class="recording-text">正在录音... 请说话</div>
+    </div>
+    
+    <!-- 文件上传模态框 -->
+    <div class="upload-modal" id="uploadModal">
+        <div class="upload-modal-content">
+            <div class="upload-modal-title">选择文件类型</div>
+            <div class="upload-options">
+                <div class="upload-btn" onclick="selectFile('image')">图片文件 (JPG/PNG)</div>
+                <div class="upload-btn" onclick="selectFile('pdf')">PDF文档</div>
+                <div class="upload-btn" onclick="selectFile('excel')">Excel表格</div>
+                <div class="upload-btn" onclick="selectFile('word')">Word文档</div>
+                <div class="upload-btn" onclick="selectFile('other')">其他文件</div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeUploadModal()">取消</button>
+                <button class="modal-btn upload" onclick="openFilePicker()">选择文件</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let selectedFiles = [];
+        let chatHistory = [];
+        const maxHistoryItems = 100; // 最多保存100条对话
+        let isVoiceMode = false;
+        let originalPlaceholder = "请输入您的可靠性问题和要求...";
+        let voicePlaceholder = "请说出您的问题和要求";
+        
+        // 页面跳转函数 - 已添加历史页面跳转
+        function goToIndex() {
+            // 已经是首页，无需跳转
+            return;
+        }
+        
+        function goToHistory() {
+            window.location.href = "AI_history.html";
+        }
+        
+        function goToResources() {
+            window.location.href = "knowledge.html";
+        }
+        
+        function goToCommunity() {
+            window.location.href = "community.html";
+        }
+        
+        function goToProfile() {
+            window.location.href = "profile.html";
+        }
+        
+        // 自动调整输入框高度
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
+        
+        // 打开文件上传模态框
+        function openUploadModal() {
+            document.getElementById('uploadModal').style.display = 'flex';
+        }
+        
+        // 关闭文件上传模态框
+        function closeUploadModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+        }
+        
+        // 选择文件类型
+        function selectFile(type) {
+            // 这里可以设置文件类型过滤器
+            closeUploadModal();
+            openFilePicker(type);
+        }
+        
+        // 打开文件选择器
+        function openFilePicker(type) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            
+            // 根据类型设置accept属性
+            switch(type) {
+                case 'image':
+                    input.accept = 'image/jpeg,image/png';
+                    break;
+                case 'pdf':
+                    input.accept = '.pdf';
+                    break;
+                case 'excel':
+                    input.accept = '.xlsx,.xls';
+                    break;
+                case 'word':
+                    input.accept = '.doc,.docx';
+                    break;
+                default:
+                    input.accept = '*/*';
+            }
+            
+            input.onchange = function(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        addFile(file.name, getFileType(file.name), formatFileSize(file.size));
+                    }
+                }
+            };
+            
+            input.click();
+        }
+        
+        // 获取文件类型
+        function getFileType(fileName) {
+            const ext = fileName.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png'].includes(ext)) return 'image';
+            if (['pdf'].includes(ext)) return 'pdf';
+            if (['xlsx', 'xls'].includes(ext)) return 'excel';
+            if (['doc', 'docx'].includes(ext)) return 'word';
+            return 'other';
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+        
+        // 添加文件到选择列表
+        function addFile(name, type, size) {
+            const file = {
+                id: Date.now(),
+                name: name,
+                type: type,
+                size: size
+            };
+            
+            selectedFiles.push(file);
+            updateSelectedAttachments();
+            
+            // 显示附件选择区域
+            document.getElementById('selectedAttachments').style.display = 'flex';
+        }
+        
+        // 更新已选择附件显示
+        function updateSelectedAttachments() {
+            const container = document.getElementById('selectedAttachments');
+            container.innerHTML = '';
+            
+            selectedFiles.forEach(file => {
+                const fileEl = document.createElement('div');
+                fileEl.className = 'selected-file';
+                fileEl.innerHTML = `
+                    ${getFileIcon(file.type)} ${file.name}
+                    <span class="remove-file" onclick="removeFile(${file.id})">×</span>
+                `;
+                container.appendChild(fileEl);
+            });
+        }
+        
+        // 获取文件类型图标
+        function getFileIcon(type) {
+            const icons = {
+                'image': '🖼️',
+                'pdf': '📄',
+                'excel': '📊',
+                'word': '📝',
+                'other': '📎'
+            };
+            return icons[type] || '📎';
+        }
+        
+        // 移除文件
+        function removeFile(id) {
+            selectedFiles = selectedFiles.filter(file => file.id !== id);
+            updateSelectedAttachments();
+            
+            if (selectedFiles.length === 0) {
+                document.getElementById('selectedAttachments').style.display = 'none';
+            }
+        }
+        
+        // 切换语音输入模式
+        function toggleVoiceInput() {
+            const input = document.getElementById('messageInput');
+            const voiceBtn = document.getElementById('voiceBtn');
+            
+            isVoiceMode = !isVoiceMode;
+            
+            if (isVoiceMode) {
+                // 切换到语音模式
+                input.placeholder = voicePlaceholder;
+                voiceBtn.style.background = '#ff4d4f';
+                voiceBtn.style.color = 'white';
+                voiceBtn.style.borderColor = '#ff4d4f';
+                
+                // 开始录音
+                startVoiceInput();
+            } else {
+                // 切换回文本模式
+                input.placeholder = originalPlaceholder;
+                voiceBtn.style.background = '#f8fafd';
+                voiceBtn.style.color = '#666';
+                voiceBtn.style.borderColor = '#e8e8e8';
+                
+                // 结束录音
+                stopVoiceInput();
+            }
+        }
+        
+        // 语音输入功能
+        function startVoiceInput() {
+            const recordingIndicator = document.getElementById('recordingIndicator');
+            
+            // 显示录音指示器
+            recordingIndicator.style.display = 'flex';
+            
+            // 模拟录音过程
+            setTimeout(() => {
+                // 模拟识别结果
+                const randomQuestions = [
+                    "如何进行PCB的热可靠性设计？",
+                    "电子元器件的降额标准是什么？",
+                    "请分析这个可靠性测试报告的问题",
+                    "电子产品环境试验的标准有哪些？",
+                    "如何计算MTBF和失效率？"
+                ];
+                
+                const randomQuestion = randomQuestions[Math.floor(Math.random() * randomQuestions.length)];
+                
+                // 将识别结果填入输入框
+                document.getElementById('messageInput').value = randomQuestion;
+                autoResize(document.getElementById('messageInput'));
+                
+                // 结束录音
+                stopVoiceInput();
+                
+                // 自动切换回文本模式
+                isVoiceMode = false;
+                document.getElementById('messageInput').placeholder = originalPlaceholder;
+                const voiceBtn = document.getElementById('voiceBtn');
+                voiceBtn.style.background = '#f8fafd';
+                voiceBtn.style.color = '#666';
+                voiceBtn.style.borderColor = '#e8e8e8';
+            }, 3000); // 模拟3秒录音时间
+        }
+        
+        // 停止语音输入
+        function stopVoiceInput() {
+            document.getElementById('recordingIndicator').style.display = 'none';
+        }
+        
+        // 发送消息
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message && selectedFiles.length === 0) {
+                alert('请输入问题或添加附件');
+                return;
+            }
+            
+            // 隐藏空状态
+            document.getElementById('emptyState').style.display = 'none';
+            
+            // 显示用户消息
+            const userMessage = createUserMessage(message, selectedFiles);
+            document.getElementById('chatHistory').appendChild(userMessage);
+            
+            // 清空输入和附件
+            input.value = '';
+            input.style.height = 'auto';
+            selectedFiles = [];
+            document.getElementById('selectedAttachments').style.display = 'none';
+            updateSelectedAttachments();
+            
+            // 滚动到底部
+            scrollToBottom();
+            
+            // 模拟AI思考
+            setTimeout(() => {
+                const aiResponse = createAIResponse(message, selectedFiles);
+                document.getElementById('chatHistory').appendChild(aiResponse);
+                scrollToBottom();
+                
+                // 保存到历史记录
+                saveToHistory(message, selectedFiles, aiResponse);
+            }, 1500);
+        }
+        
+        // 创建用户消息
+        function createUserMessage(text, files) {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            
+            const container = document.createElement('div');
+            container.className = 'message-container message-user';
+            
+            let html = `<div class="message-time">${timeStr}</div>`;
+            
+            if (text) {
+                html += `<div class="message-bubble user-bubble">${text}</div>`;
+            }
+            
+            if (files && files.length > 0) {
+                files.forEach(file => {
+                    html += `
+                        <div class="attachment-preview">
+                            <div class="attachment-icon">${getFileIcon(file.type)}</div>
+                            <div class="attachment-info">
+                                <div class="attachment-name">${file.name}</div>
+                                <div class="attachment-size">${file.size}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            container.innerHTML = html;
+            return container;
+        }
+        
+        // 创建AI响应
+        function createAIResponse(userMessage, files) {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            
+            const container = document.createElement('div');
+            container.className = 'message-container message-ai';
+            
+            let responseText = '';
+            let hasReport = false;
+            
+            // 根据用户消息类型生成不同响应
+            if (files.length > 0) {
+                const fileNames = files.map(f => f.name).join('、');
+                responseText = `
+                    我已经分析了您上传的${files.length > 1 ? '文件' : '文件'}：${fileNames}。
+                    <br><br>
+                    <strong>分析结论：</strong>
+                    <br>
+                    • 文件格式正确，数据完整
+                    <br>
+                    • 发现了3个潜在的可靠性风险点
+                    <br>
+                    • 提供了针对性的改进建议
+                    <br><br>
+                    详细分析报告已生成，您可以下载查看完整内容。
+                `;
+                hasReport = true;
+            } else if (userMessage.includes('报告') || userMessage.includes('分析') || userMessage.includes('建议')) {
+                responseText = `
+                    我已经根据您的问题进行了专业分析：
+                    <br><br>
+                    <strong>主要发现：</strong>
+                    <br>
+                    1. <strong>问题识别</strong>：${userMessage.substring(0, 20)}...
+                    <br>
+                    2. <strong>根本原因</strong>：可能涉及材料选择、设计参数或工艺控制
+                    <br>
+                    3. <strong>解决方案</strong>：提供三种可行的改进方案
+                    <br><br>
+                    详细分析报告已生成，包含具体实施步骤和验证方法。
+                `;
+                hasReport = true;
+            } else if (userMessage.includes('标准') || userMessage.includes('规范')) {
+                responseText = `
+                    关于您询问的可靠性标准问题，我的建议如下：
+                    <br><br>
+                    <strong>相关标准推荐：</strong>
+                    <br>
+                    • IPC标准（印制电路板设计与制造）
+                    <br>
+                    • JEDEC标准（半导体器件可靠性）
+                    <br>
+                    • MIL标准（军用设备可靠性）
+                    <br>
+                    • ISO标准（质量管理体系）
+                    <br><br>
+                    我可以为您详细解读特定标准的要求和应用方法。
+                `;
+            } else {
+                responseText = `
+                    感谢您的提问。关于"${userMessage}"，我的专业建议如下：
+                    <br><br>
+                    <strong>建议步骤：</strong>
+                    <br>
+                    1. 首先检查设计是否符合相关可靠性标准
+                    <br>
+                    2. 考虑进行加速寿命测试验证产品可靠性
+                    <br>
+                    3. 建议使用我们工具箱中的可靠性计算工具进行量化分析
+                    <br><br>
+                    如需更详细的分析，您可以上传相关设计文件或测试数据。
+                `;
+            }
+            
+            let html = `
+                <div class="message-time">${timeStr}</div>
+                <div class="message-bubble ai-bubble">${responseText}</div>
+            `;
+            
+            if (hasReport) {
+                html += `
+                    <div class="report-card">
+                        <div class="report-header">
+                            <div class="report-icon">📊</div>
+                            <div class="report-title">专业分析报告已生成</div>
+                        </div>
+                        <div class="report-desc">
+                            我已为您生成详细的分析报告，包含问题分析、解决方案和参考标准。
+                        </div>
+                        <div class="report-download" onclick="downloadReport()">
+                            <div class="download-info">
+                                <div class="download-icon">↓</div>
+                                <div class="download-text">下载分析报告 (PDF)</div>
+                            </div>
+                            <div class="download-cost">-10积分</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+            return container;
+        }
+        
+        // 下载报告
+        function downloadReport() {
+            if (confirm('下载此报告需要消耗10积分，确认下载吗？')) {
+                alert('报告下载中... 在实际应用中，这里会触发文件下载并扣除积分');
+                // 模拟下载完成后，可以显示下载成功提示
+                setTimeout(() => {
+                    alert('报告下载成功！已扣除10积分。');
+                }, 1000);
+            }
+        }
+        
+        // 保存到历史记录
+        function saveToHistory(userMessage, files, aiResponse) {
+            const historyItem = {
+                id: 'history_' + Date.now(),
+                timestamp: new Date().toISOString(),
+                userMessage: userMessage,
+                files: [...files],
+                aiResponse: aiResponse.innerHTML
+            };
+            
+            // 添加到历史记录数组
+            chatHistory.push(historyItem);
+            
+            // 如果超过最大限制，移除最旧的记录
+            if (chatHistory.length > maxHistoryItems) {
+                chatHistory.shift();
+            }
+            
+            // 在实际应用中，这里会将历史记录保存到本地存储或发送到服务器
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+        }
+        
+        // 滚动到底部
+        function scrollToBottom() {
+            const chatHistory = document.getElementById('chatHistory');
+            setTimeout(() => {
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }, 100);
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = function() {
+            // 加载历史记录
+            const savedHistory = localStorage.getItem('chatHistory');
+            if (savedHistory) {
+                try {
+                    chatHistory = JSON.parse(savedHistory);
+                    
+                    // 如果有历史记录，隐藏空状态
+                    if (chatHistory.length > 0) {
+                        document.getElementById('emptyState').style.display = 'none';
+                        
+                        // 在实际应用中，这里会重新渲染历史记录
+                        // 为了简化，我们显示一条示例消息
+                        document.querySelectorAll('.message-container').forEach(el => {
+                            el.style.display = 'flex';
+                        });
+                    }
+                } catch (e) {
+                    console.error('解析历史记录失败:', e);
+                    chatHistory = [];
+                }
+            }
+            
+            // 附件图标点击事件
+            document.getElementById('attachIcon').addEventListener('click', openUploadModal);
+            
+            // 回车键发送消息
+            document.getElementById('messageInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    document.getElementById('sendBtn').click();
+                }
+            });
+            
+            // 点击外部关闭上传模态框
+            document.addEventListener('click', function(e) {
+                const modal = document.getElementById('uploadModal');
+                if (e.target === modal) {
+                    closeUploadModal();
+                }
+            });
+            
+            // 初始化输入框字体大小
+            const input = document.getElementById('messageInput');
+            input.style.fontSize = '15px';
+        };
+    </script>
+</body>
+</html>

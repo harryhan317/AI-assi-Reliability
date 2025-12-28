@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>专家咨询 - 可靠性AI助手</title>
+    <style>
+        /* 基础样式 - 与index.html一致 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+            background-color: #f8fafd;
+            color: #333;
+            line-height: 1.5;
+            max-width: 390px;
+            margin: 0 auto;
+            min-height: 844px;
+            position: relative;
+            overflow: hidden; /* 改为与index.html一致 */
+        }
+        
+        /* 主容器 - 添加与index.html一致的布局 */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 50px); /* 减去底部导航栏高度 */
+        }
+        
+        /* 科技感装饰元素 */
+        .tech-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 顶部导航栏 - 居中 */
+        .navbar {
+            height: 44px;
+            padding: 0 16px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+            position: relative;
+        }
+        
+        .navbar-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            position: absolute;
+            right: 16px;
+        }
+        
+        /* 主内容区域 - 修改为与index.html一致的可滚动布局 */
+        .main-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 搜索筛选区域 */
+        .filter-section {
+            margin-bottom: 20px;
+        }
+        
+        .filter-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 12px;
+        }
+        
+        /* 优化筛选按钮布局 - 使用网格布局 */
+        .filter-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .filter-btn {
+            padding: 8px 4px;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .filter-btn:hover {
+            background: #e6f7ff;
+            color: #1890ff;
+            border-color: #1890ff;
+        }
+        
+        .filter-btn.active {
+            background: #1890ff;
+            color: white;
+            border-color: #1890ff;
+        }
+        
+        .search-container {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 44px 0 16px;
+            font-size: 14px;
+            background: white;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            color: #333;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: #1890ff;
+            box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 18px;
+        }
+        
+        /* 专家列表区域 */
+        .experts-section {
+            margin-bottom: 24px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        .section-subtitle {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* 专家卡片 */
+        .experts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .expert-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .expert-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(24, 144, 255, 0.1);
+            border-color: rgba(24, 144, 255, 0.3);
+        }
+        
+        .expert-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+        
+        .expert-info {
+            flex: 1;
+        }
+        
+        .expert-name-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .expert-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-right: 8px;
+        }
+        
+        .expert-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            background: #ffd666;
+            color: #d46b08;
+        }
+        
+        .expert-title {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .expert-company {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        
+        .expert-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        
+        .expert-tag {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            background: #f0f9ff;
+            color: #1890ff;
+            border: 1px solid rgba(24, 144, 255, 0.3);
+        }
+        
+        .expert-stats {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #999;
+        }
+        
+        .expert-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .expert-status {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        
+        .status-online {
+            background: #52c41a;
+        }
+        
+        .status-busy {
+            background: #ffa940;
+        }
+        
+        .status-offline {
+            background: #d9d9d9;
+        }
+        
+        .status-text {
+            color: #666;
+        }
+        
+        .consult-btn {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+        }
+        
+        .consult-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
+        }
+        
+        .consult-price {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ff4d4f;
+        }
+        
+        /* 咨询说明区域 */
+        .instructions-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e8e8e8;
+            margin-bottom: 20px;
+        }
+        
+        .instructions-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 12px;
+        }
+        
+        .instructions-list {
+            list-style-type: none;
+        }
+        
+        .instruction-item {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .instruction-item:before {
+            content: "•";
+            color: #1890ff;
+            font-size: 16px;
+            position: absolute;
+            left: 0;
+        }
+        
+        /* 底部导航栏 - 与index.html完全一致 */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            height: 50px;
+            background-color: #ffffff;
+            display: flex;
+            border-top: 1px solid #e5e5e5;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #999;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .tab-item.active {
+            color: #1890ff;
+        }
+        
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px; /* 图标大小 */
+        }
+        
+        /* 底部导航栏图标 - 使用emoji图标保持与index.html一致性 */
+        .home-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        .resources-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        .community-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        .profile-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        /* 加载状态 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            color: #d9d9d9;
+            margin-bottom: 16px;
+        }
+        
+        .empty-text {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* 创建科技感装饰元素 */
+        .tech-decoration {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 滚动条样式 - 与index.html一致 */
+        .main-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .main-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb {
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 2px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(24, 144, 255, 0.3);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 390px) {
+            .filter-container {
+                gap: 8px;
+            }
+            
+            .filter-btn {
+                padding: 8px 2px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器 - 添加与index.html一致的布局 -->
+    <div class="main-container">
+        <!-- 科技感装饰元素 -->
+        <div class="tech-decoration" id="techDecoration"></div>
+        
+        <!-- 顶部导航栏 -->
+        <div class="navbar">
+            <div class="navbar-title">专家咨询</div>
+            <div class="user-avatar" onclick="goToProfile()">张</div>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <!-- 搜索筛选区域 -->
+            <div class="filter-section">
+                <div class="filter-title">选择专家领域</div>
+                <div class="filter-container" id="filterContainer">
+                    <!-- 筛选按钮将通过JavaScript动态生成 -->
+                </div>
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="searchInput" 
+                        placeholder="搜索专家姓名或专长..."
+                        onkeydown="handleSearchKeydown(event)"
+                    >
+                    <div class="search-icon">🔍</div>
+                </div>
+            </div>
+            
+            <!-- 专家列表区域 -->
+            <div class="experts-section">
+                <div class="section-header">
+                    <div class="section-title">付费专家咨询</div>
+                    <div class="section-subtitle">精选行业专家，一对一深度解答</div>
+                </div>
+                
+                <div class="experts-list" id="expertsList">
+                    <!-- 专家列表将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 咨询说明区域 -->
+            <div class="instructions-section">
+                <div class="instructions-title">咨询说明</div>
+                <ul class="instructions-list">
+                    <li class="instruction-item">专家咨询服务为付费服务，费用根据专家等级不同</li>
+                    <li class="instruction-item">咨询费用在专家确认接单后从账户扣除</li>
+                    <li class="instruction-item">专家通常会在24小时内回复您的问题</li>
+                    <li class="instruction-item">可上传相关技术文档供专家分析</li>
+                    <li class="instruction-item">不满意可申请退款（审核通过后退还80%费用）</li>
+                    <li class="instruction-item">咨询内容将严格保密，仅您和专家可见</li>
+                </ul>
+            </div>
+            
+            <!-- 加载状态 -->
+            <div class="loading" id="loading">
+                加载中...
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 - 修改为与index.html完全一致 -->
+    <div class="tab-bar">
+        <div class="tab-item" onclick="goToIndex()">
+            <div class="tab-icon home-icon">🏠</div>
+            <div>首页</div>
+        </div>
+        <div class="tab-item" onclick="goToResources()">
+            <div class="tab-icon resources-icon">📚</div>
+            <div>资源</div>
+        </div>
+        <div class="tab-item" onclick="goToCommunity()">
+            <div class="tab-icon community-icon">👥</div>
+            <div>社区</div>
+        </div>
+        <div class="tab-item" onclick="goToProfile()">
+            <div class="tab-icon profile-icon">👤</div>
+            <div>我的</div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let experts = [];
+        let filters = [];
+        let activeFilter = 'all';
+        
+        // 创建科技感装饰元素
+        function createTechDecoration() {
+            const decoration = document.getElementById('techDecoration');
+            const dotsCount = 30;
+            
+            for (let i = 0; i < dotsCount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'tech-dot';
+                
+                // 随机位置
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const size = 2 + Math.random() * 4;
+                const opacity = 0.1 + Math.random() * 0.2;
+                
+                dot.style.left = `${left}%`;
+                dot.style.top = `${top}%`;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                dot.style.opacity = opacity;
+                dot.style.background = `rgba(${24 + Math.random() * 100}, ${144 + Math.random() * 50}, 255, ${opacity})`;
+                
+                decoration.appendChild(dot);
+            }
+        }
+        
+        // 页面跳转函数
+        function goToIndex() {
+            window.location.href = "index.html";
+        }
+        
+        function goToResources() {
+            window.location.href = "knowledge.html";
+        }
+        
+        function goToCommunity() {
+            window.location.href = "community.html";
+        }
+        
+        function goToProfile() {
+            window.location.href = "profile.html";
+        }
+        
+        // 初始化筛选器
+        function initFilters() {
+            filters = [
+                { id: 'all', name: '全部' },
+                { id: 'pcb', name: 'PCB设计' },
+                { id: 'thermal', name: '热管理' },
+                { id: 'failure', name: '失效分析' },
+                { id: 'environment', name: '环境试验' },
+                { id: 'components', name: '元器件' },
+                { id: 'fmea', name: 'FMEA' },
+                { id: 'reliability', name: '可靠性' }
+            ];
+            
+            // 渲染筛选按钮
+            renderFilters();
+        }
+        
+        // 渲染筛选按钮
+        function renderFilters() {
+            const container = document.getElementById('filterContainer');
+            container.innerHTML = '';
+            
+            filters.forEach(filter => {
+                const button = document.createElement('button');
+                button.className = `filter-btn ${filter.id === activeFilter ? 'active' : ''}`;
+                button.textContent = filter.name;
+                button.onclick = () => setActiveFilter(filter.id);
+                container.appendChild(button);
+            });
+        }
+        
+        // 设置活动筛选器
+        function setActiveFilter(filterId) {
+            activeFilter = filterId;
+            renderFilters();
+            renderExperts();
+        }
+        
+        // 初始化专家数据
+        function initExperts() {
+            experts = [
+                {
+                    id: 1,
+                    name: "王明远",
+                    title: "可靠性工程高级专家",
+                    company: "华为技术有限公司",
+                    experience: "15年",
+                    tags: ["热设计", "FMEA", "IPC标准", "可靠性预测"],
+                    avatar: "王",
+                    status: "online",
+                    price: 200,
+                    rating: 4.9,
+                    consultations: 128,
+                    responseRate: 98,
+                    badge: "金牌专家"
+                },
+                {
+                    id: 2,
+                    name: "李静",
+                    title: "失效分析首席专家",
+                    company: "中科院微电子所",
+                    experience: "12年",
+                    tags: ["失效分析", "SEM/EDS", "材料分析", "故障诊断"],
+                    avatar: "李",
+                    status: "online",
+                    price: 180,
+                    rating: 4.8,
+                    consultations: 96,
+                    responseRate: 95,
+                    badge: "金牌专家"
+                },
+                {
+                    id: 3,
+                    name: "张建国",
+                    title: "环境试验技术总监",
+                    company: "中国电科集团",
+                    experience: "18年",
+                    tags: ["环境试验", "振动测试", "HALT/HASS", "可靠性试验"],
+                    avatar: "张",
+                    status: "busy",
+                    price: 220,
+                    rating: 4.9,
+                    consultations: 156,
+                    responseRate: 97,
+                    badge: "金牌专家"
+                },
+                {
+                    id: 4,
+                    name: "刘芳",
+                    title: "电子元器件资深专家",
+                    company: "TI中国",
+                    experience: "10年",
+                    tags: ["元器件", "降额设计", "寿命预测", "选型指南"],
+                    avatar: "刘",
+                    status: "online",
+                    price: 150,
+                    rating: 4.7,
+                    consultations: 84,
+                    responseRate: 96,
+                    badge: "银牌专家"
+                },
+                {
+                    id: 5,
+                    name: "陈志强",
+                    title: "PCB设计首席工程师",
+                    company: "中兴通讯",
+                    experience: "14年",
+                    tags: ["PCB设计", "信号完整性", "EMC/EMI", "高速电路"],
+                    avatar: "陈",
+                    status: "online",
+                    price: 160,
+                    rating: 4.8,
+                    consultations: 112,
+                    responseRate: 99,
+                    badge: "金牌专家"
+                },
+                {
+                    id: 6,
+                    name: "赵晓梅",
+                    title: "可靠性测试专家",
+                    company: "比亚迪电子",
+                    experience: "8年",
+                    tags: ["可靠性测试", "加速寿命", "MTBF", "测试标准"],
+                    avatar: "赵",
+                    status: "offline",
+                    price: 120,
+                    rating: 4.6,
+                    consultations: 67,
+                    responseRate: 94,
+                    badge: "银牌专家"
+                }
+            ];
+            
+            // 渲染专家列表
+            renderExperts();
+        }
+        
+        // 渲染专家列表
+        function renderExperts() {
+            const list = document.getElementById('expertsList');
+            list.innerHTML = '';
+            
+            // 根据筛选条件过滤专家
+            let filteredExperts = experts;
+            
+            if (activeFilter !== 'all') {
+                // 这里简化处理，实际应用中应根据专家的专长标签进行筛选
+                filteredExperts = experts.filter(expert => {
+                    const tagMap = {
+                        'pcb': 'PCB设计',
+                        'thermal': '热设计',
+                        'failure': '失效分析',
+                        'environment': '环境试验',
+                        'components': '元器件',
+                        'fmea': 'FMEA',
+                        'reliability': '可靠性'
+                    };
+                    
+                    const targetTag = tagMap[activeFilter];
+                    return expert.tags.some(tag => tag.includes(targetTag));
+                });
+            }
+            
+            // 搜索关键词过滤
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            
+            if (searchTerm) {
+                filteredExperts = filteredExperts.filter(expert => 
+                    expert.name.toLowerCase().includes(searchTerm) ||
+                    expert.title.toLowerCase().includes(searchTerm) ||
+                    expert.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            if (filteredExperts.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <div class="empty-text">未找到匹配的专家</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredExperts.forEach(expert => {
+                const card = document.createElement('div');
+                card.className = 'expert-card';
+                card.onclick = () => showExpertDetail(expert);
+                
+                // 标签HTML
+                const tagsHtml = expert.tags.map(tag => 
+                    `<span class="expert-tag">${tag}</span>`
+                ).join('');
+                
+                // 状态显示
+                let statusText = "";
+                let statusClass = "";
+                
+                if (expert.status === "online") {
+                    statusText = "在线";
+                    statusClass = "status-online";
+                } else if (expert.status === "busy") {
+                    statusText = "忙碌";
+                    statusClass = "status-busy";
+                } else {
+                    statusText = "离线";
+                    statusClass = "status-offline";
+                }
+                
+                card.innerHTML = `
+                    <div class="expert-header">
+                        <div class="expert-avatar">${expert.avatar}</div>
+                        <div class="expert-info">
+                            <div class="expert-name-row">
+                                <div class="expert-name">${expert.name}</div>
+                                <div class="expert-badge">${expert.badge}</div>
+                            </div>
+                            <div class="expert-title">${expert.title}</div>
+                            <div class="expert-company">${expert.company} | ${expert.experience}经验</div>
+                            <div class="expert-tags">${tagsHtml}</div>
+                        </div>
+                    </div>
+                    <div class="expert-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">${expert.rating}</div>
+                            <div class="stat-label">评分</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${expert.consultations}</div>
+                            <div class="stat-label">咨询次数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${expert.responseRate}%</div>
+                            <div class="stat-label">回复率</div>
+                        </div>
+                    </div>
+                    <div class="expert-footer">
+                        <div class="expert-status">
+                            <div class="status-dot ${statusClass}"></div>
+                            <div class="status-text">${statusText}</div>
+                        </div>
+                        <div class="consult-price">${expert.price}积分/次</div>
+                        <button class="consult-btn" onclick="consultExpert(${expert.id}); event.stopPropagation();">立即咨询</button>
+                    </div>
+                `;
+                
+                list.appendChild(card);
+            });
+        }
+        
+        // 显示专家详情
+        function showExpertDetail(expert) {
+            alert(`专家详情：${expert.name}\n\n职称：${expert.title}\n公司：${expert.company}\n经验：${expert.experience}\n专长：${expert.tags.join('、')}\n评分：${expert.rating}（${expert.consultations}次咨询）\n咨询价格：${expert.price}积分/次\n\n点击"立即咨询"按钮开始咨询。`);
+        }
+        
+        // 咨询专家
+        function consultExpert(expertId) {
+            const expert = experts.find(e => e.id === expertId);
+            
+            if (!expert) return;
+            
+            if (expert.status === "offline") {
+                alert(`${expert.name}专家当前不在线，您可以留言，专家上线后会尽快回复。`);
+                return;
+            }
+            
+            const confirmConsult = confirm(`您确定要咨询${expert.name}专家吗？\n\n专家：${expert.name}（${expert.title}）\n咨询费用：${expert.price}积分\n专长：${expert.tags.join('、')}\n\n确认后将扣除相应积分，专家通常会在24小时内回复。`);
+            
+            if (confirmConsult) {
+                // 模拟扣除积分
+                alert(`正在为您连接${expert.name}专家...\n已扣除${expert.price}积分。\n\n在实际应用中，这里会跳转到专家咨询对话页面。`);
+                
+                // 在实际应用中，这里会跳转到咨询对话页面
+                // window.location.href = `expert_chat.html?expertId=${expertId}`;
+            }
+        }
+        
+        // 处理搜索
+        function handleSearchKeydown(event) {
+            if (event.key === 'Enter') {
+                renderExperts();
+            }
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = function() {
+            // 创建科技感装饰元素
+            createTechDecoration();
+            
+            // 初始化筛选器
+            initFilters();
+            
+            // 初始化专家数据
+            initExperts();
+            
+            // 设置搜索框输入事件
+            document.getElementById('searchInput').addEventListener('input', function() {
+                // 防抖处理，避免频繁渲染
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => {
+                    renderExperts();
+                }, 300);
+            });
+            
+            // 设置搜索框焦点事件
+            document.getElementById('searchInput').addEventListener('focus', function() {
+                this.style.borderColor = '#1890ff';
+                this.style.boxShadow = '0 0 0 3px rgba(24, 144, 255, 0.1)';
+            });
+            
+            document.getElementById('searchInput').addEventListener('blur', function() {
+                this.style.borderColor = '#e8e8e8';
+                this.style.boxShadow = 'none';
+            });
+        };
+    </script>
+</body>
+</html>

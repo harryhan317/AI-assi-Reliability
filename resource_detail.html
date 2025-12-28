@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>资源详情 - 可靠性AI助手</title>
+    <style>
+        /* 基础样式 - 与index.html一致 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+            background-color: #f8fafd;
+            color: #333;
+            line-height: 1.5;
+            max-width: 390px;
+            margin: 0 auto;
+            min-height: 844px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 50px);
+        }
+        
+        /* 科技感装饰元素 */
+        .tech-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            height: 44px;
+            padding: 0 16px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+            position: relative;
+        }
+        
+        .navbar-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        .back-btn {
+            position: absolute;
+            left: 16px;
+            font-size: 20px;
+            color: #1890ff;
+            cursor: pointer;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 资源头部信息 */
+        .resource-header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .resource-icon-large {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 28px;
+        }
+        
+        .resource-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 8px;
+        }
+        
+        .resource-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        
+        .resource-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #999;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* 资源列表 */
+        .resources-section {
+            margin-bottom: 24px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        .section-subtitle {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .resources-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .resource-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .resource-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(24, 144, 255, 0.1);
+            border-color: rgba(24, 144, 255, 0.3);
+        }
+        
+        .item-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        
+        .item-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .item-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .item-tag {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            background: #f0f9ff;
+            color: #1890ff;
+            border: 1px solid rgba(24, 144, 255, 0.3);
+        }
+        
+        .item-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* 下载按钮 */
+        .download-btn {
+            padding: 6px 16px;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+        }
+        
+        .download-btn:disabled {
+            background: #d9d9d9;
+            cursor: not-allowed;
+        }
+        
+        /* 底部导航栏 */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            height: 50px;
+            background-color: #ffffff;
+            display: flex;
+            border-top: 1px solid #e5e5e5;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #999;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .tab-item.active {
+            color: #1890ff;
+        }
+        
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        /* 图标颜色 - 与knowledge.html保持一致 */
+        .item-1 .item-icon { background: linear-gradient(135deg, #ffd666 0%, #ffa940 100%); color: #d46b08; }
+        .item-2 .item-icon { background: linear-gradient(135deg, #bae637 0%, #73d13d 100%); color: #389e0d; }
+        .item-3 .item-icon { background: linear-gradient(135deg, #87e8de 0%, #36cfc9 100%); color: #08979c; }
+        .item-4 .item-icon { background: linear-gradient(135deg, #adc6ff 0%, #597ef7 100%); color: #1d39c4; }
+        .item-5 .item-icon { background: linear-gradient(135deg, #d3adf7 0%, #9254de 100%); color: #531dab; }
+        .item-6 .item-icon { background: linear-gradient(135deg, #ffadd2 0%, #f759ab 100%); color: #c41d7f; }
+        .item-7 .item-icon { background: linear-gradient(135deg, #ffa39e 0%, #ff4d4f 100%); color: #a8071a; }
+        .item-8 .item-icon { background: linear-gradient(135deg, #ffd8bf 0%, #ff7a45 100%); color: #d4380d; }
+        .item-9 .item-icon { background: linear-gradient(135deg, #b5f5ec 0%, #13c2c2 100%); color: #006d75; }
+        .item-10 .item-icon { background: linear-gradient(135deg, #d6e4ff 0%, #85a5ff 100%); color: #10239e; }
+        .item-11 .item-icon { background: linear-gradient(135deg, #efdbff 0%, #b37feb 100%); color: #391085; }
+        .item-12 .item-icon { background: linear-gradient(135deg, #ffccc7 0%, #ff7875 100%); color: #820014; }
+        
+        /* 滚动条样式 */
+        .main-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .main-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb {
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 2px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(24, 144, 255, 0.3);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 390px) {
+            .resource-header {
+                padding: 16px;
+            }
+            
+            .resource-title {
+                font-size: 18px;
+            }
+            
+            .resource-item {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 科技感装饰元素 -->
+        <div class="tech-decoration" id="techDecoration"></div>
+        
+        <!-- 顶部导航栏 -->
+        <div class="navbar">
+            <div class="back-btn" onclick="goBack()">‹</div>
+            <div class="navbar-title" id="pageTitle">资源详情</div>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="main-content" id="mainContent">
+            <!-- 资源头部信息将通过JavaScript动态生成 -->
+            
+            <!-- 资源列表 -->
+            <div class="resources-section" id="resourcesSection">
+                <!-- 资源列表将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+        <div class="tab-item" onclick="goToIndex()">
+            <div class="tab-icon home-icon">🏠</div>
+            <div>首页</div>
+        </div>
+        <div class="tab-item active">
+            <div class="tab-icon resources-icon">📚</div>
+            <div>资源</div>
+        </div>
+        <div class="tab-item" onclick="goToCommunity()">
+            <div class="tab-icon community-icon">👥</div>
+            <div>社区</div>
+        </div>
+        <div class="tab-item" onclick="goToProfile()">
+            <div class="tab-icon profile-icon">👤</div>
+            <div>我的</div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentCategory = null;
+        let categoryResources = [];
+        
+        // 创建科技感装饰元素
+        function createTechDecoration() {
+            const decoration = document.getElementById('techDecoration');
+            const dotsCount = 30;
+            
+            for (let i = 0; i < dotsCount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'tech-dot';
+                
+                // 随机位置
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const size = 2 + Math.random() * 4;
+                const opacity = 0.1 + Math.random() * 0.2;
+                
+                dot.style.left = `${left}%`;
+                dot.style.top = `${top}%`;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                dot.style.opacity = opacity;
+                dot.style.background = `rgba(${24 + Math.random() * 100}, ${144 + Math.random() * 50}, 255, ${opacity})`;
+                
+                decoration.appendChild(dot);
+            }
+        }
+        
+        // 页面跳转函数 - 修正回退到knowledge.html
+        function goBack() {
+            window.location.href = "knowledge.html";
+        }
+        
+        function goToIndex() {
+            window.location.href = "index.html";
+        }
+        
+        function goToCommunity() {
+            window.location.href = "community.html";
+        }
+        
+        function goToProfile() {
+            window.location.href = "profile.html";
+        }
+        
+        // 从URL参数获取分类ID
+        function getCategoryFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryId = urlParams.get('category');
+            return categoryId ? parseInt(categoryId) : null;
+        }
+        
+        // 获取资源分类数据
+        function getCategoryData(categoryId) {
+            // 资源分类定义 - 与knowledge.html保持一致
+            const categories = [
+                {
+                    id: 1,
+                    name: "标准规范",
+                    icon: "📋",
+                    description: "行业标准、国家标准、国际标准",
+                    colorClass: "item-1",
+                    count: 128
+                },
+                {
+                    id: 2,
+                    name: "器件手册",
+                    icon: "📘",
+                    description: "元器件规格书、数据手册",
+                    colorClass: "item-2",
+                    count: 356
+                },
+                {
+                    id: 3,
+                    name: "应用笔记",
+                    icon: "📝",
+                    description: "技术应用指南、设计参考",
+                    colorClass: "item-3",
+                    count: 89
+                },
+                {
+                    id: 4,
+                    name: "参考书籍",
+                    icon: "📚",
+                    description: "可靠性工程专业书籍",
+                    colorClass: "item-4",
+                    count: 42
+                },
+                {
+                    id: 5,
+                    name: "辅助工具",
+                    icon: "🛠️",
+                    description: "计算工具、设计工具",
+                    colorClass: "item-5",
+                    count: 23
+                },
+                {
+                    id: 6,
+                    name: "失效案例",
+                    icon: "🔍",
+                    description: "典型失效分析案例",
+                    colorClass: "item-6",
+                    count: 67
+                },
+                {
+                    id: 7,
+                    name: "测试方法",
+                    icon: "🧪",
+                    description: "可靠性测试标准与方法",
+                    colorClass: "item-7",
+                    count: 54
+                },
+                {
+                    id: 8,
+                    name: "设计指南",
+                    icon: "🎯",
+                    description: "可靠性设计规范与指南",
+                    colorClass: "item-8",
+                    count: 31
+                },
+                {
+                    id: 9,
+                    name: "法规文件",
+                    icon: "⚖️",
+                    description: "相关法律法规文件",
+                    colorClass: "item-9",
+                    count: 18
+                },
+                {
+                    id: 10,
+                    name: "技术论文",
+                    icon: "📄",
+                    description: "学术论文、技术报告",
+                    colorClass: "item-10",
+                    count: 156
+                },
+                {
+                    id: 11,
+                    name: "培训资料",
+                    icon: "🎓",
+                    description: "培训课件、学习资料",
+                    colorClass: "item-11",
+                    count: 27
+                },
+                {
+                    id: 12,
+                    name: "软件下载",
+                    icon: "💾",
+                    description: "可靠性相关软件",
+                    colorClass: "item-12",
+                    count: 15
+                }
+            ];
+            
+            return categories.find(cat => cat.id === categoryId) || categories[0];
+        }
+        
+        // 获取分类下的资源数据
+        function getResourcesForCategory(categoryId) {
+            // 模拟数据 - 根据分类ID返回不同的资源
+            const allResources = {
+                1: [ // 标准规范
+                    { id: 101, title: "IPC-A-610H 标准", description: "电子组件的可接受性标准，最新H版本", tags: ["IPC", "电子组装", "行业标准"], downloads: 1250, points: 10 },
+                    { id: 102, title: "JEDEC JESD22-A104", description: "温度循环测试标准", tags: ["JEDEC", "环境试验", "测试标准"], downloads: 890, points: 15 },
+                    { id: 103, title: "MIL-HDBK-217F", description: "电子设备可靠性预测手册", tags: ["MIL标准", "可靠性预测", "手册"], downloads: 1560, points: 20 },
+                    { id: 104, title: "ISO 9001:2015", description: "质量管理体系标准", tags: ["ISO", "质量管理", "体系标准"], downloads: 2100, points: 5 },
+                    { id: 105, title: "GB/T 2423 系列", description: "电工电子产品环境试验标准", tags: ["国标", "环境试验", "测试标准"], downloads: 1350, points: 10 }
+                ],
+                2: [ // 器件手册
+                    { id: 201, title: "TI电源管理IC手册", description: "德州仪器电源管理芯片数据手册", tags: ["TI", "电源管理", "数据手册"], downloads: 3200, points: 0 },
+                    { id: 202, title: "NXP MCU参考手册", description: "恩智浦微控制器参考手册", tags: ["NXP", "MCU", "参考手册"], downloads: 2560, points: 0 },
+                    { id: 203, title: "ADI数据转换器手册", description: "模拟器件数据转换器完整手册", tags: ["ADI", "ADC/DAC", "数据手册"], downloads: 1890, points: 5 },
+                    { id: 204, title: "Infineon功率器件手册", description: "英飞凌功率半导体器件手册", tags: ["Infineon", "功率器件", "数据手册"], downloads: 1780, points: 0 }
+                ],
+                5: [ // 辅助工具
+                    { id: 501, title: "MTBF计算工具", description: "可靠性预测和MTBF计算工具", tags: ["MTBF", "计算工具", "可靠性预测"], downloads: 2300, points: 50 },
+                    { id: 502, title: "FMEA分析模板", description: "失效模式与影响分析Excel模板", tags: ["FMEA", "分析模板", "Excel"], downloads: 3100, points: 0 },
+                    { id: 503, title: "降额计算器", description: "电子元器件降额设计计算工具", tags: ["降额设计", "计算器", "工具"], downloads: 1870, points: 30 },
+                    { id: 504, title: "热分析工具", description: "电子产品热管理分析软件", tags: ["热分析", "热管理", "工具"], downloads: 1560, points: 100 }
+                ]
+            };
+            
+            return allResources[categoryId] || allResources[1]; // 默认返回标准规范的资源
+        }
+        
+        // 渲染页面内容
+        function renderPageContent() {
+            const categoryId = getCategoryFromURL();
+            currentCategory = getCategoryData(categoryId);
+            categoryResources = getResourcesForCategory(categoryId);
+            
+            // 设置页面标题
+            document.getElementById('pageTitle').textContent = currentCategory.name;
+            
+            // 渲染头部信息
+            renderHeader();
+            
+            // 渲染资源列表
+            renderResources();
+        }
+        
+        // 渲染头部信息
+        function renderHeader() {
+            const headerHtml = `
+                <div class="resource-header">
+                    <div class="resource-icon-large ${currentCategory.colorClass}">
+                        ${currentCategory.icon}
+                    </div>
+                    <h1 class="resource-title">${currentCategory.name}</h1>
+                    <p class="resource-desc">${currentCategory.description}</p>
+                    <div class="resource-meta">
+                        <div class="meta-item">
+                            <span>📊</span>
+                            <span>${currentCategory.count}个资源</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>📈</span>
+                            <span>${categoryResources.length}个可下载</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('mainContent').insertAdjacentHTML('afterbegin', headerHtml);
+        }
+        
+        // 渲染资源列表
+        function renderResources() {
+            const section = document.getElementById('resourcesSection');
+            
+            // 创建标题区域
+            const titleHtml = `
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">${currentCategory.name}列表</div>
+                        <div class="section-subtitle">共${categoryResources.length}个资源</div>
+                    </div>
+                </div>
+            `;
+            
+            // 创建资源列表
+            let resourcesHtml = '<div class="resources-list">';
+            
+            categoryResources.forEach((resource, index) => {
+                const colorClass = `item-${(index % 12) + 1}`;
+                const icon = getIconForResourceType(currentCategory.id);
+                
+                resourcesHtml += `
+                    <div class="resource-item" onclick="openResourceDetail(${resource.id})">
+                        <div class="item-header">
+                            <div class="item-icon ${colorClass}">${icon}</div>
+                            <div class="item-info">
+                                <div class="item-title">${resource.title}</div>
+                                <div class="item-desc">${resource.description}</div>
+                            </div>
+                        </div>
+                        <div class="item-footer">
+                            <div class="item-tags">
+                                ${resource.tags.map(tag => `<span class="item-tag">${tag}</span>`).join('')}
+                            </div>
+                            <div class="item-stats">
+                                <span class="stat-item">📥 ${resource.downloads.toLocaleString()}</span>
+                                <span class="stat-item">💰 ${resource.points}积分</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resourcesHtml += '</div>';
+            
+            section.innerHTML = titleHtml + resourcesHtml;
+        }
+        
+        // 根据分类ID获取图标
+        function getIconForResourceType(categoryId) {
+            const iconMap = {
+                1: '📋', // 标准规范
+                2: '📘', // 器件手册
+                3: '📝', // 应用笔记
+                4: '📚', // 参考书籍
+                5: '🛠️', // 辅助工具
+                6: '🔍', // 失效案例
+                7: '🧪', // 测试方法
+                8: '🎯', // 设计指南
+                9: '⚖️', // 法规文件
+                10: '📄', // 技术论文
+                11: '🎓', // 培训资料
+                12: '💾'  // 软件下载
+            };
+            
+            return iconMap[categoryId] || '📄';
+        }
+        
+        // 打开资源详情（模拟）
+        function openResourceDetail(resourceId) {
+            const resource = categoryResources.find(r => r.id === resourceId);
+            if (resource) {
+                alert(`资源详情：${resource.title}\n\n描述：${resource.description}\n下载所需积分：${resource.points}\n下载次数：${resource.downloads.toLocaleString()}\n\n在实际应用中，这里会跳转到资源下载页面。`);
+            }
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = function() {
+            // 创建科技感装饰元素
+            createTechDecoration();
+            
+            // 渲染页面内容
+            renderPageContent();
+        };
+    </script>
+</body>
+</html>

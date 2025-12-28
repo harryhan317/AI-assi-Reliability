@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>上传分享 - 可靠性AI助手</title>
+    <style>
+        /* 基础样式 - 与index.html一致 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+            background-color: #f8fafd;
+            color: #333;
+            line-height: 1.5;
+            max-width: 390px;
+            margin: 0 auto;
+            min-height: 844px;
+            position: relative;
+            overflow: hidden; /* 改为与index.html一致 */
+        }
+        
+        /* 主容器 - 添加与index.html一致的布局 */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 50px); /* 减去底部导航栏高度 */
+        }
+        
+        /* 科技感装饰元素 */
+        .tech-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 顶部导航栏 - 居中 */
+        .navbar {
+            height: 44px;
+            padding: 0 16px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+            position: relative;
+        }
+        
+        .navbar-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        .back-btn {
+            position: absolute;
+            left: 16px;
+            font-size: 20px;
+            color: #1890ff;
+            cursor: pointer;
+        }
+        
+        /* 主内容区域 - 修改为与index.html一致的可滚动布局 */
+        .main-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 上传引导区域 */
+        .upload-guide {
+            background: linear-gradient(135deg, #f6ffed 0%, #f0f9ff 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(82, 196, 26, 0.2);
+        }
+        
+        .guide-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .guide-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .guide-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        .guide-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        
+        .guide-points {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            color: #d46b08;
+            font-weight: 500;
+        }
+        
+        .points-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        /* 上传表单区域 */
+        .upload-form {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-section {
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .required {
+            color: #ff4d4f;
+            margin-left: 4px;
+        }
+        
+        /* 输入框样式 */
+        .form-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 16px;
+            font-size: 14px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            color: #333;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: #1890ff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+        }
+        
+        .form-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px 16px;
+            font-size: 14px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            color: #333;
+            outline: none;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+        
+        .form-textarea:focus {
+            border-color: #1890ff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+        }
+        
+        /* 选择框样式 */
+        .form-select {
+            width: 100%;
+            height: 44px;
+            padding: 0 16px;
+            font-size: 14px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            color: #333;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        /* 标签选择器 */
+        .tag-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .tag-option {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            background: #f8fafd;
+            color: #666;
+            border: 1px solid #e8e8e8;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .tag-option:hover {
+            background: #e6f7ff;
+            color: #1890ff;
+            border-color: #1890ff;
+        }
+        
+        .tag-option.selected {
+            background: #1890ff;
+            color: white;
+            border-color: #1890ff;
+        }
+        
+        /* 文件上传区域 */
+        .file-upload-area {
+            border: 2px dashed #e8e8e8;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8fafd;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #1890ff;
+            background: #e6f7ff;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: #1890ff;
+            margin-bottom: 16px;
+        }
+        
+        .upload-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .upload-hint {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* 已上传文件列表 */
+        .uploaded-files {
+            margin-top: 16px;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            background: #f8fafd;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #e6f7ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 20px;
+            color: #1890ff;
+        }
+        
+        .file-info {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+        
+        .file-size {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .file-remove {
+            color: #ff4d4f;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+        }
+        
+        /* 积分设置 */
+        .points-setting {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .points-input {
+            flex: 1;
+        }
+        
+        .points-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+        }
+        
+        .points-example {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+        
+        /* 权限设置 */
+        .permission-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        
+        .permission-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .permission-option:hover {
+            border-color: #1890ff;
+            background: #f0f9ff;
+        }
+        
+        .permission-option.selected {
+            border-color: #1890ff;
+            background: #e6f7ff;
+        }
+        
+        .permission-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #f0f9ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+            color: #1890ff;
+        }
+        
+        .permission-info {
+            flex: 1;
+        }
+        
+        .permission-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        
+        .permission-desc {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* 提交按钮区域 */
+        .submit-section {
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            height: 52px;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            background: #d9d9d9;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        /* 加载状态 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+        
+        /* 底部导航栏 - 与index.html完全一致 */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            height: 50px;
+            background-color: #ffffff;
+            display: flex;
+            border-top: 1px solid #e5e5e5;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #999;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .tab-item.active {
+            color: #1890ff;
+        }
+        
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px; /* 图标大小 */
+        }
+        
+        /* 底部导航栏图标 - 使用emoji图标保持与index.html一致性 */
+        .home-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        .resources-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        .community-icon {
+            color: #1890ff; /* 激活状态颜色 - 因为这是从社区页面进来的 */
+        }
+        
+        .profile-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        /* 创建科技感装饰元素 */
+        .tech-decoration {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 模态框样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 340px;
+            max-width: 90%;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .modal-icon {
+            font-size: 48px;
+            color: #52c41a;
+            margin-bottom: 16px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 12px;
+        }
+        
+        .modal-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        
+        .modal-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        /* 滚动条样式 - 与index.html一致 */
+        .main-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .main-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb {
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 2px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(24, 144, 255, 0.3);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 390px) {
+            .main-content {
+                padding: 12px;
+            }
+            
+            .upload-form {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器 - 添加与index.html一致的布局 -->
+    <div class="main-container">
+        <!-- 科技感装饰元素 -->
+        <div class="tech-decoration" id="techDecoration"></div>
+        
+        <!-- 顶部导航栏 -->
+        <div class="navbar">
+            <div class="back-btn" onclick="goBack()">‹</div>
+            <div class="navbar-title">上传分享</div>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <!-- 上传引导区域 -->
+            <div class="upload-guide">
+                <div class="guide-header">
+                    <div class="guide-icon">📤</div>
+                    <div class="guide-title">分享技术资料，获得积分奖励</div>
+                </div>
+                <div class="guide-desc">
+                    上传标准、手册、工具等可靠性相关资源，审核通过后可获得积分奖励。优质内容将获得额外推荐和更多下载收益。
+                </div>
+                <div class="guide-points">
+                    <span class="points-icon">💰</span>
+                    <span>上传资源审核通过可获得50-500积分，内容被下载还可获得额外收益</span>
+                </div>
+            </div>
+            
+            <!-- 上传表单区域 -->
+            <div class="upload-form">
+                <!-- 资源标题 -->
+                <div class="form-section">
+                    <div class="section-title">
+                        资源标题
+                        <span class="required">*</span>
+                    </div>
+                    <input 
+                        type="text" 
+                        class="form-input" 
+                        id="resourceTitle" 
+                        placeholder="请输入资源标题（如：IPC-A-610H标准文件）"
+                        maxlength="100"
+                    >
+                </div>
+                
+                <!-- 资源描述 -->
+                <div class="form-section">
+                    <div class="section-title">
+                        资源描述
+                        <span class="required">*</span>
+                    </div>
+                    <textarea 
+                        class="form-textarea" 
+                        id="resourceDescription" 
+                        placeholder="请描述资源内容、适用场景、技术要点等信息..."
+                        rows="4"
+                    ></textarea>
+                </div>
+                
+                <!-- 资源类型 -->
+                <div class="form-section">
+                    <div class="section-title">
+                        资源类型
+                        <span class="required">*</span>
+                    </div>
+                    <select class="form-select" id="resourceType">
+                        <option value="" disabled selected>请选择资源类型</option>
+                        <option value="standard">标准规范</option>
+                        <option value="manual">器件手册</option>
+                        <option value="note">应用笔记</option>
+                        <option value="book">参考书籍</option>
+                        <option value="tool">辅助工具</option>
+                        <option value="case">失效案例</option>
+                        <option value="method">测试方法</option>
+                        <option value="guide">设计指南</option>
+                        <option value="law">法规文件</option>
+                        <option value="paper">技术论文</option>
+                        <option value="training">培训资料</option>
+                        <option value="software">软件下载</option>
+                        <option value="other">其他资源</option>
+                    </select>
+                </div>
+                
+                <!-- 资源标签 -->
+                <div class="form-section">
+                    <div class="section-title">资源标签</div>
+                    <div class="tag-selector" id="tagSelector">
+                        <!-- 标签将通过JavaScript动态生成 -->
+                    </div>
+                    <input 
+                        type="text" 
+                        class="form-input" 
+                        id="customTag" 
+                        placeholder="输入自定义标签（按回车添加）"
+                        style="margin-top: 12px;"
+                        onkeydown="addCustomTag(event)"
+                    >
+                </div>
+                
+                <!-- 文件上传 -->
+                <div class="form-section">
+                    <div class="section-title">
+                        上传文件
+                        <span class="required">*</span>
+                    </div>
+                    <div class="file-upload-area" id="fileUploadArea" onclick="triggerFileUpload()">
+                        <div class="upload-icon">📁</div>
+                        <div class="upload-text">点击或拖拽文件到此区域上传</div>
+                        <div class="upload-hint">支持 PDF、DOC、XLS、PPT、JPG、PNG、ZIP、RAR 格式，单个文件最大100MB</div>
+                    </div>
+                    <input 
+                        type="file" 
+                        id="fileInput" 
+                        multiple 
+                        style="display: none;"
+                        onchange="handleFileSelect(event)"
+                    >
+                    <div class="uploaded-files" id="uploadedFiles">
+                        <!-- 已上传文件将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <!-- 积分设置 -->
+                <div class="form-section">
+                    <div class="section-title">下载积分设置</div>
+                    <div class="points-setting">
+                        <div class="points-input">
+                            <input 
+                                type="number" 
+                                class="form-input" 
+                                id="downloadPoints" 
+                                placeholder="0"
+                                min="0"
+                                max="1000"
+                                value="0"
+                            >
+                        </div>
+                        <div>积分/次下载</div>
+                    </div>
+                    <div class="points-info">
+                        设置下载所需积分，其他用户下载时您将获得相应积分。设为0表示免费分享。
+                    </div>
+                    <div class="points-example">
+                        示例：标准文档通常设置10-50积分，工具软件可设置50-200积分
+                    </div>
+                </div>
+                
+                <!-- 权限设置 -->
+                <div class="form-section">
+                    <div class="section-title">访问权限</div>
+                    <div class="permission-options">
+                        <div class="permission-option" onclick="selectPermission(this, 'public')">
+                            <div class="permission-icon">🌍</div>
+                            <div class="permission-info">
+                                <div class="permission-title">公开访问</div>
+                                <div class="permission-desc">所有注册用户均可查看和下载</div>
+                            </div>
+                        </div>
+                        <div class="permission-option" onclick="selectPermission(this, 'community')">
+                            <div class="permission-icon">👥</div>
+                            <div class="permission-info">
+                                <div class="permission-title">社区成员</div>
+                                <div class="permission-desc">仅社区认证成员可查看和下载</div>
+                            </div>
+                        </div>
+                        <div class="permission-option" onclick="selectPermission(this, 'premium')">
+                            <div class="permission-icon">⭐</div>
+                            <div class="permission-info">
+                                <div class="permission-title">高级用户</div>
+                                <div class="permission-desc">仅高级会员和专家可查看和下载</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 提交按钮区域 -->
+                <div class="submit-section">
+                    <button class="submit-btn" id="submitBtn" onclick="submitResource()">提交资源</button>
+                </div>
+            </div>
+            
+            <!-- 加载状态 -->
+            <div class="loading" id="loading">
+                上传中，请稍候...
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 - 修改为与index.html完全一致 -->
+    <div class="tab-bar">
+        <div class="tab-item" onclick="goToIndex()">
+            <div class="tab-icon home-icon">🏠</div>
+            <div>首页</div>
+        </div>
+        <div class="tab-item" onclick="goToResources()">
+            <div class="tab-icon resources-icon">📚</div>
+            <div>资源</div>
+        </div>
+        <div class="tab-item active">
+            <div class="tab-icon community-icon">👥</div>
+            <div>社区</div>
+        </div>
+        <div class="tab-item" onclick="goToProfile()">
+            <div class="tab-icon profile-icon">👤</div>
+            <div>我的</div>
+        </div>
+    </div>
+    
+    <!-- 上传成功模态框 -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon">✅</div>
+            <div class="modal-title">资源上传成功！</div>
+            <div class="modal-text">
+                您的资源已提交审核，审核通过后将获得50积分奖励。<br>
+                审核通常需要1-3个工作日，请耐心等待。
+            </div>
+            <button class="modal-btn" onclick="closeSuccessModal()">确定</button>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let selectedFiles = [];
+        let selectedTags = [];
+        let selectedPermission = 'public';
+        let resourceType = '';
+        let tagOptions = [];
+        
+        // 创建科技感装饰元素
+        function createTechDecoration() {
+            const decoration = document.getElementById('techDecoration');
+            const dotsCount = 30;
+            
+            for (let i = 0; i < dotsCount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'tech-dot';
+                
+                // 随机位置
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const size = 2 + Math.random() * 4;
+                const opacity = 0.1 + Math.random() * 0.2;
+                
+                dot.style.left = `${left}%`;
+                dot.style.top = `${top}%`;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                dot.style.opacity = opacity;
+                dot.style.background = `rgba(${24 + Math.random() * 100}, ${144 + Math.random() * 50}, 255, ${opacity})`;
+                
+                decoration.appendChild(dot);
+            }
+        }
+        
+        // 页面跳转函数
+        function goBack() {
+            window.history.back();
+        }
+        
+        function goToIndex() {
+            window.location.href = "index.html";
+        }
+        
+        function goToResources() {
+            window.location.href = "knowledge.html";
+        }
+        
+        function goToCommunity() {
+            window.location.href = "community.html";
+        }
+        
+        function goToProfile() {
+            window.location.href = "profile.html";
+        }
+        
+        // 初始化标签选项
+        function initTagOptions() {
+            tagOptions = [
+                "PCB设计", "热管理", "失效分析", "环境试验", 
+                "元器件", "标准规范", "FMEA", "信号完整性",
+                "电源设计", "EMC/EMI", "振动分析", "可靠性预测",
+                "新手必备", "经验分享", "案例分析", "技术讨论",
+                "IPC标准", "JEDEC标准", "MIL标准", "ISO标准"
+            ];
+            
+            const container = document.getElementById('tagSelector');
+            container.innerHTML = '';
+            
+            tagOptions.forEach(tag => {
+                const tagEl = document.createElement('div');
+                tagEl.className = 'tag-option';
+                tagEl.textContent = tag;
+                tagEl.onclick = () => toggleTagSelection(tagEl, tag);
+                container.appendChild(tagEl);
+            });
+        }
+        
+        // 切换标签选择
+        function toggleTagSelection(element, tag) {
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                selectedTags = selectedTags.filter(t => t !== tag);
+            } else {
+                // 限制最多选择5个标签
+                if (selectedTags.length >= 5) {
+                    alert('最多只能选择5个标签');
+                    return;
+                }
+                element.classList.add('selected');
+                selectedTags.push(tag);
+            }
+        }
+        
+        // 添加自定义标签
+        function addCustomTag(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const input = document.getElementById('customTag');
+                const tag = input.value.trim();
+                
+                if (!tag) return;
+                
+                // 检查标签是否已存在
+                if (selectedTags.includes(tag) || tagOptions.includes(tag)) {
+                    alert('该标签已存在');
+                    input.value = '';
+                    return;
+                }
+                
+                // 限制最多选择5个标签
+                if (selectedTags.length >= 5) {
+                    alert('最多只能选择5个标签');
+                    return;
+                }
+                
+                // 添加标签到选择器
+                const container = document.getElementById('tagSelector');
+                const tagEl = document.createElement('div');
+                tagEl.className = 'tag-option selected';
+                tagEl.textContent = tag;
+                tagEl.onclick = () => toggleTagSelection(tagEl, tag);
+                container.appendChild(tagEl);
+                
+                // 添加到已选标签
+                selectedTags.push(tag);
+                
+                // 清空输入框
+                input.value = '';
+            }
+        }
+        
+        // 触发文件上传
+        function triggerFileUpload() {
+            document.getElementById('fileInput').click();
+        }
+        
+        // 处理文件选择
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    
+                    // 检查文件大小（最大100MB）
+                    if (file.size > 100 * 1024 * 1024) {
+                        alert(`文件 "${file.name}" 超过100MB限制，请压缩后上传`);
+                        continue;
+                    }
+                    
+                    // 检查文件类型
+                    const allowedTypes = [
+                        'application/pdf',
+                        'application/msword',
+                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'application/vnd.ms-excel',
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'application/vnd.ms-powerpoint',
+                        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                        'image/jpeg',
+                        'image/png',
+                        'application/zip',
+                        'application/x-rar-compressed'
+                    ];
+                    
+                    if (!allowedTypes.includes(file.type) && !file.name.match(/\.(pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|zip|rar)$/i)) {
+                        alert(`文件 "${file.name}" 格式不支持，请上传PDF、DOC、XLS、PPT、JPG、PNG、ZIP、RAR格式文件`);
+                        continue;
+                    }
+                    
+                    // 添加到已选择文件列表
+                    addSelectedFile(file);
+                }
+            }
+        }
+        
+        // 添加已选择文件
+        function addSelectedFile(file) {
+            const fileId = Date.now() + Math.random();
+            const fileItem = {
+                id: fileId,
+                name: file.name,
+                size: formatFileSize(file.size),
+                type: getFileType(file.name),
+                file: file
+            };
+            
+            selectedFiles.push(fileItem);
+            updateUploadedFilesDisplay();
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+        
+        // 获取文件类型
+        function getFileType(fileName) {
+            const ext = fileName.split('.').pop().toLowerCase();
+            const typeMap = {
+                'pdf': 'PDF文档',
+                'doc': 'Word文档',
+                'docx': 'Word文档',
+                'xls': 'Excel表格',
+                'xlsx': 'Excel表格',
+                'ppt': 'PPT演示',
+                'pptx': 'PPT演示',
+                'jpg': '图片',
+                'jpeg': '图片',
+                'png': '图片',
+                'zip': '压缩文件',
+                'rar': '压缩文件'
+            };
+            
+            return typeMap[ext] || '未知文件';
+        }
+        
+        // 更新已上传文件显示
+        function updateUploadedFilesDisplay() {
+            const container = document.getElementById('uploadedFiles');
+            container.innerHTML = '';
+            
+            if (selectedFiles.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            
+            selectedFiles.forEach(file => {
+                const fileEl = document.createElement('div');
+                fileEl.className = 'file-item';
+                fileEl.innerHTML = `
+                    <div class="file-icon">${getFileIcon(file.type)}</div>
+                    <div class="file-info">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-size">${file.size} • ${file.type}</div>
+                    </div>
+                    <div class="file-remove" onclick="removeFile(${file.id})">×</div>
+                `;
+                container.appendChild(fileEl);
+            });
+        }
+        
+        // 获取文件图标
+        function getFileIcon(fileType) {
+            const iconMap = {
+                'PDF文档': '📄',
+                'Word文档': '📝',
+                'Excel表格': '📊',
+                'PPT演示': '📽️',
+                '图片': '🖼️',
+                '压缩文件': '🗜️'
+            };
+            
+            return iconMap[fileType] || '📎';
+        }
+        
+        // 移除文件
+        function removeFile(fileId) {
+            selectedFiles = selectedFiles.filter(file => file.id !== fileId);
+            updateUploadedFilesDisplay();
+        }
+        
+        // 选择权限 - 修正参数传递
+        function selectPermission(element, permission) {
+            selectedPermission = permission;
+            
+            // 更新UI
+            document.querySelectorAll('.permission-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            element.classList.add('selected');
+        }
+        
+        // 提交资源
+        function submitResource() {
+            const title = document.getElementById('resourceTitle').value.trim();
+            const description = document.getElementById('resourceDescription').value.trim();
+            const type = document.getElementById('resourceType').value;
+            const points = parseInt(document.getElementById('downloadPoints').value);
+            
+            // 验证必填项
+            if (!title) {
+                alert('请填写资源标题');
+                return;
+            }
+            
+            if (!description) {
+                alert('请填写资源描述');
+                return;
+            }
+            
+            if (!type) {
+                alert('请选择资源类型');
+                return;
+            }
+            
+            if (selectedFiles.length === 0) {
+                alert('请至少上传一个文件');
+                return;
+            }
+            
+            // 验证积分范围
+            if (points < 0 || points > 1000) {
+                alert('下载积分必须在0-1000之间');
+                return;
+            }
+            
+            // 显示加载状态
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
+            
+            // 模拟上传过程
+            setTimeout(() => {
+                // 在实际应用中，这里会上传文件到服务器并提交表单数据
+                
+                // 显示成功模态框
+                document.getElementById('successModal').style.display = 'flex';
+                
+                // 隐藏加载状态
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+                
+                // 清空表单
+                resetForm();
+                
+                // 记录上传历史
+                saveUploadHistory(title, type, points);
+            }, 2000);
+        }
+        
+        // 重置表单
+        function resetForm() {
+            document.getElementById('resourceTitle').value = '';
+            document.getElementById('resourceDescription').value = '';
+            document.getElementById('resourceType').value = '';
+            document.getElementById('downloadPoints').value = '0';
+            
+            // 清空标签选择
+            selectedTags = [];
+            document.querySelectorAll('.tag-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // 清空自定义标签输入
+            document.getElementById('customTag').value = '';
+            
+            // 清空文件选择
+            selectedFiles = [];
+            updateUploadedFilesDisplay();
+            
+            // 重置权限选择
+            selectedPermission = 'public';
+            document.querySelectorAll('.permission-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelectorAll('.permission-option')[0].classList.add('selected');
+        }
+        
+        // 保存上传历史
+        function saveUploadHistory(title, type, points) {
+            // 从本地存储获取上传历史
+            let uploadHistory = JSON.parse(localStorage.getItem('uploadHistory') || '[]');
+            
+            // 添加上传记录
+            const uploadRecord = {
+                id: Date.now(),
+                title: title,
+                type: type,
+                points: points,
+                tags: selectedTags,
+                date: new Date().toISOString(),
+                status: 'pending' // pending, approved, rejected
+            };
+            
+            uploadHistory.unshift(uploadRecord);
+            
+            // 限制最多保存50条记录
+            if (uploadHistory.length > 50) {
+                uploadHistory = uploadHistory.slice(0, 50);
+            }
+            
+            // 保存到本地存储
+            localStorage.setItem('uploadHistory', JSON.stringify(uploadHistory));
+        }
+        
+        // 关闭成功模态框
+        function closeSuccessModal() {
+            document.getElementById('successModal').style.display = 'none';
+            
+            // 返回社区页面
+            goToCommunity();
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = function() {
+            // 创建科技感装饰元素
+            createTechDecoration();
+            
+            // 初始化标签选项
+            initTagOptions();
+            
+            // 设置默认权限选择
+            document.querySelectorAll('.permission-option')[0].classList.add('selected');
+            
+            // 初始化拖放上传
+            initDragAndDrop();
+            
+            // 监听资源类型变化
+            document.getElementById('resourceType').addEventListener('change', function() {
+                resourceType = this.value;
+                updateTagSuggestions();
+            });
+        };
+        
+        // 初始化拖放上传
+        function initDragAndDrop() {
+            const uploadArea = document.getElementById('fileUploadArea');
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#1890ff';
+                this.style.background = '#e6f7ff';
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#e8e8e8';
+                this.style.background = '#f8fafd';
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#e8e8e8';
+                this.style.background = '#f8fafd';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    // 创建模拟事件对象
+                    const event = {
+                        target: {
+                            files: files
+                        }
+                    };
+                    handleFileSelect(event);
+                }
+            });
+        }
+        
+        // 根据资源类型更新标签建议
+        function updateTagSuggestions() {
+            const tagSuggestions = {
+                'standard': ['标准规范', 'IPC标准', 'JEDEC标准', 'MIL标准', 'ISO标准'],
+                'manual': ['元器件', '器件手册', '数据手册', '规格书'],
+                'note': ['应用笔记', '设计参考', '技术指南'],
+                'tool': ['辅助工具', '计算工具', '设计工具', '软件'],
+                'case': ['失效案例', '案例分析', '故障诊断'],
+                'method': ['测试方法', '可靠性测试', '环境试验']
+            };
+            
+            // 清除当前选择的标签
+            selectedTags = [];
+            document.querySelectorAll('.tag-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // 如果有该类型的标签建议，自动选中前几个
+            if (tagSuggestions[resourceType]) {
+                const suggestions = tagSuggestions[resourceType];
+                
+                suggestions.forEach(tag => {
+                    // 找到对应的标签元素
+                    const tagElements = document.querySelectorAll('.tag-option');
+                    tagElements.forEach(element => {
+                        if (element.textContent === tag && selectedTags.length < 3) {
+                            element.classList.add('selected');
+                            selectedTags.push(tag);
+                        }
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+</html>

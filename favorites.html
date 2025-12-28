@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我的收藏 - 可靠性AI助手</title>
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+            background-color: #f8fafd;
+            color: #333;
+            line-height: 1.5;
+            max-width: 390px;
+            margin: 0 auto;
+            min-height: 844px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 科技感装饰元素 */
+        .tech-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            height: 44px;
+            padding: 0 16px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+            position: relative;
+        }
+        
+        .back-btn {
+            position: absolute;
+            left: 16px;
+            font-size: 20px;
+            color: #1890ff;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(24, 144, 255, 0.1);
+        }
+        
+        .navbar-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            height: calc(100vh - 94px);
+            padding: 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 筛选器区域 */
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 12px;
+        }
+        
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .filter-tag {
+            padding: 6px 12px;
+            background: #f0f9ff;
+            border: 1px solid #e6f7ff;
+            border-radius: 16px;
+            font-size: 13px;
+            color: #1890ff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-tag.active {
+            background: #1890ff;
+            color: white;
+        }
+        
+        .filter-tag:hover {
+            background: #e6f7ff;
+        }
+        
+        /* 收藏列表 */
+        .favorites-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .favorite-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .favorite-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .favorite-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .favorite-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a8f;
+            line-height: 1.4;
+            flex: 1;
+            margin-right: 12px;
+        }
+        
+        .favorite-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .favorite-action {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+        
+        .favorite-delete {
+            color: #ff4d4f;
+            background: #fff2f0;
+        }
+        
+        .favorite-delete:hover {
+            background: #ffccc7;
+        }
+        
+        .favorite-share {
+            color: #1890ff;
+            background: #f0f9ff;
+        }
+        
+        .favorite-share:hover {
+            background: #e6f7ff;
+        }
+        
+        .favorite-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .favorite-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .favorite-type {
+            padding: 2px 6px;
+            background: #f6ffed;
+            color: #52c41a;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        .favorite-date {
+            font-size: 11px;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 24px;
+            text-align: center;
+        }
+        
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 32px;
+            color: #1890ff;
+        }
+        
+        .empty-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 8px;
+        }
+        
+        .empty-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            max-width: 280px;
+        }
+        
+        /* 底部导航栏 */
+        .tab-bar {
+            height: 50px;
+            background: white;
+            border-top: 1px solid rgba(24, 144, 255, 0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            z-index: 1000;
+        }
+        
+        .tab-item {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 10px;
+            color: #999;
+        }
+        
+        .tab-item.active {
+            color: #1890ff;
+        }
+        
+        .tab-item:hover {
+            background: rgba(24, 144, 255, 0.05);
+        }
+        
+        .tab-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 科技感装饰元素 -->
+    <div class="tech-decoration" id="techDecoration"></div>
+    
+    <!-- 顶部导航栏 -->
+    <div class="navbar">
+        <div class="back-btn" onclick="goBack()">‹</div>
+        <div class="navbar-title">我的收藏</div>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-container">
+        <!-- 筛选器区域 -->
+        <div class="filter-section">
+            <div class="filter-title">筛选收藏</div>
+            <div class="filter-tags">
+                <div class="filter-tag active" onclick="filterFavorites('all')">全部</div>
+                <div class="filter-tag" onclick="filterFavorites('article')">文章</div>
+                <div class="filter-tag" onclick="filterFavorites('resource')">资源</div>
+                <div class="filter-tag" onclick="filterFavorites('expert')">专家</div>
+                <div class="filter-tag" onclick="filterFavorites('qa')">问答</div>
+            </div>
+        </div>
+        
+        <!-- 收藏列表 -->
+        <div class="favorites-list" id="favoritesList">
+            <!-- 收藏项将通过JavaScript动态生成 -->
+        </div>
+        
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">⭐</div>
+            <div class="empty-title">暂无收藏内容</div>
+            <div class="empty-desc">您还没有收藏任何内容，快去发现精彩内容吧</div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+        <div class="tab-item" onclick="goToIndex()">
+            <div class="tab-icon">🏠</div>
+            <div>首页</div>
+        </div>
+        <div class="tab-item" onclick="goToResources()">
+            <div class="tab-icon">📚</div>
+            <div>资源</div>
+        </div>
+        <div class="tab-item" onclick="goToCommunity()">
+            <div class="tab-icon">👥</div>
+            <div>社区</div>
+        </div>
+        <div class="tab-item active" onclick="goToProfile()">
+            <div class="tab-icon">👤</div>
+            <div>我的</div>
+        </div>
+    </div>
+
+    <script>
+        // 科技感装饰元素生成
+        function generateTechDecoration() {
+            const container = document.getElementById('techDecoration');
+            const dots = [];
+            
+            for (let i = 0; i < 30; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'tech-dot';
+                dot.style.left = Math.random() * 100 + '%';
+                dot.style.top = Math.random() * 100 + '%';
+                dot.style.opacity = Math.random() * 0.5 + 0.1;
+                dots.push(dot);
+            }
+            
+            dots.forEach(dot => container.appendChild(dot));
+        }
+        
+        // 模拟收藏数据
+        const sampleFavorites = [
+            {
+                id: 1,
+                title: "可靠性工程中的故障预测与健康管理",
+                content: "本文详细介绍了故障预测与健康管理在可靠性工程中的应用，包括数据采集、特征提取、状态评估等关键技术。",
+                type: "article",
+                date: "2024-01-15",
+                source: "可靠性工程期刊"
+            },
+            {
+                id: 2,
+                title: "AI在设备维护中的智能诊断技术",
+                content: "探讨了人工智能技术在设备故障诊断中的应用，包括机器学习算法、深度学习模型等前沿技术。",
+                type: "resource",
+                date: "2024-01-10",
+                source: "技术资源库"
+            },
+            {
+                id: 3,
+                title: "可靠性数据分析工具包",
+                content: "一套完整的可靠性数据分析工具，包含数据预处理、统计分析、可靠性预测等功能模块。",
+                type: "resource",
+                date: "2024-01-08",
+                source: "工具下载"
+            },
+            {
+                id: 4,
+                title: "如何提高系统可靠性？专家问答",
+                content: "多位可靠性专家就系统可靠性提升策略进行了深入讨论，分享了实践经验和技术建议。",
+                type: "qa",
+                date: "2024-01-05",
+                source: "专家社区"
+            }
+        ];
+        
+        // 初始化页面
+        function initPage() {
+            generateTechDecoration();
+            loadFavorites();
+        }
+        
+        // 加载收藏列表
+        function loadFavorites() {
+            const favoritesList = document.getElementById('favoritesList');
+            const emptyState = document.getElementById('emptyState');
+            
+            // 从本地存储获取收藏数据，如果没有则使用示例数据
+            let favorites = JSON.parse(localStorage.getItem('favorites')) || sampleFavorites;
+            
+            if (favorites.length === 0) {
+                favoritesList.style.display = 'none';
+                emptyState.style.display = 'flex';
+                return;
+            }
+            
+            favoritesList.style.display = 'flex';
+            emptyState.style.display = 'none';
+            favoritesList.innerHTML = '';
+            
+            favorites.forEach(favorite => {
+                const favoriteItem = createFavoriteItem(favorite);
+                favoritesList.appendChild(favoriteItem);
+            });
+        }
+        
+        // 创建收藏项
+        function createFavoriteItem(favorite) {
+            const item = document.createElement('div');
+            item.className = 'favorite-item';
+            
+            const typeLabels = {
+                'article': '文章',
+                'resource': '资源',
+                'expert': '专家',
+                'qa': '问答'
+            };
+            
+            item.innerHTML = `
+                <div class="favorite-header">
+                    <div class="favorite-title">${favorite.title}</div>
+                    <div class="favorite-actions">
+                        <div class="favorite-action favorite-share" onclick="shareFavorite(${favorite.id})" title="分享">↗</div>
+                        <div class="favorite-action favorite-delete" onclick="deleteFavorite(${favorite.id})" title="删除">×</div>
+                    </div>
+                </div>
+                <div class="favorite-content">${favorite.content}</div>
+                <div class="favorite-meta">
+                    <div class="favorite-type">${typeLabels[favorite.type] || favorite.type}</div>
+                    <div class="favorite-date">${favorite.date} | ${favorite.source}</div>
+                </div>
+            `;
+            
+            return item;
+        }
+        
+        // 筛选收藏
+        function filterFavorites(type) {
+            const tags = document.querySelectorAll('.filter-tag');
+            tags.forEach(tag => tag.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 实际应用中这里会根据类型筛选数据
+            // 这里简化处理，重新加载所有收藏
+            loadFavorites();
+        }
+        
+        // 删除收藏
+        function deleteFavorite(id) {
+            if (confirm('确定要删除这个收藏吗？')) {
+                let favorites = JSON.parse(localStorage.getItem('favorites')) || sampleFavorites;
+                favorites = favorites.filter(favorite => favorite.id !== id);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                loadFavorites();
+            }
+        }
+        
+        // 分享收藏
+        function shareFavorite(id) {
+            alert('在实际应用中，这里会调用分享功能');
+        }
+        
+        // 导航函数
+        function goBack() {
+            window.history.back();
+        }
+        
+        function goToIndex() {
+            window.location.href = 'index.html';
+        }
+        
+        function goToResources() {
+            window.location.href = 'resources.html';
+        }
+        
+        function goToCommunity() {
+            window.location.href = 'community.html';
+        }
+        
+        function goToProfile() {
+            window.location.href = 'profile.html';
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

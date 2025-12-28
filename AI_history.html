@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>历史对话 - 可靠性AI助手</title>
+    <style>
+        /* 基础样式 - 与index.html保持一致 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+            background-color: #f8fafd;
+            color: #333;
+            line-height: 1.5;
+            max-width: 390px;
+            margin: 0 auto;
+            min-height: 844px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 科技感装饰元素 */
+        .tech-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            height: 44px;
+            padding: 0 16px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+            position: relative;
+        }
+        
+        .navbar-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a3a8f;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .back-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            color: #1890ff;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(24, 144, 255, 0.1);
+        }
+        
+        /* 修改垃圾桶图标尺寸为原尺寸的2/3 */
+        .trash-bin-btn {
+            width: 28px; /* 原32px的2/3约21px，这里调整为28px保持可点击性 */
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px; /* 图标大小适当缩小 */
+            cursor: pointer;
+            color: #666;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .trash-bin-btn:hover {
+            background: rgba(24, 144, 255, 0.1);
+            color: #1890ff;
+        }
+        
+        .clear-options {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            width: 140px;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+            border: 1px solid rgba(24, 144, 255, 0.1);
+        }
+        
+        .clear-option {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .clear-option:hover {
+            background: #f0f9ff;
+            color: #1890ff;
+        }
+        
+        .clear-option.delete-all {
+            color: #ff4d4f;
+        }
+        
+        .clear-option.delete-all:hover {
+            background: #fff1f0;
+        }
+        
+        /* 搜索框区域 */
+        .search-container {
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+        }
+        
+        .search-input {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px;
+            font-size: 15px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            color: #333;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: #1890ff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+        }
+        
+        .search-input::placeholder {
+            color: #999;
+        }
+        
+        /* 历史对话列表 - 调整得更紧凑 */
+        .history-container {
+            flex: 1;
+            padding: 12px 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* 减少间距使布局更紧凑 */
+        }
+        
+        .history-item {
+            background: white;
+            border-radius: 12px;
+            padding: 14px 16px; /* 减少内边距使布局更紧凑 */
+            border: 1px solid #e8e8e8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .history-item:hover {
+            border-color: #1890ff;
+            box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .history-question {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1a3a8f;
+            margin-bottom: 6px; /* 减少间距使布局更紧凑 */
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 1; /* 问题摘要只显示一行 */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .history-answer {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px; /* 减少间距使布局更紧凑 */
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* 回答预览显示两行 */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 38px; /* 确保两行高度 */
+        }
+        
+        .history-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-time {
+            font-size: 11px; /* 减小字体大小 */
+            color: #999;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* 删除按钮靠左放置 */
+        .delete-btn {
+            width: 24px; /* 缩小尺寸 */
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px; /* 减小图标大小 */
+            color: #999;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            margin-left: 8px; /* 和时间戳保持间距 */
+        }
+        
+        .delete-btn:hover {
+            background: #fff1f0;
+            color: #ff4d4f;
+        }
+        
+        /* 空状态 */
+        .empty-history {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 24px;
+            color: #999;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .empty-text {
+            font-size: 14px;
+        }
+        
+        /* 底部导航栏 */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            height: 50px;
+            background-color: #ffffff;
+            display: flex;
+            border-top: 1px solid #e5e5e5;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #999;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .tab-item.active {
+            color: #1890ff;
+        }
+        
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        /* 底部导航栏图标颜色 */
+        .home-icon, .resources-icon, .community-icon, .profile-icon {
+            color: #999;
+        }
+        
+        .tab-item.active .home-icon {
+            color: #1890ff;
+        }
+        
+        /* 确认对话框 */
+        .confirm-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .confirm-content {
+            background: white;
+            border-radius: 16px;
+            width: 300px;
+            max-width: 90%;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .confirm-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 16px;
+        }
+        
+        .confirm-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .confirm-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .confirm-btn.cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        .confirm-btn.delete {
+            background: linear-gradient(135deg, #ff4d4f 0%, #cf1322 100%);
+            color: white;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 50px);
+        }
+        
+        /* 滚动条样式 */
+        .history-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .history-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+        
+        .history-container::-webkit-scrollbar-thumb {
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 2px;
+        }
+        
+        .history-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(24, 144, 255, 0.3);
+        }
+        
+        /* 批量选择模式 */
+        .batch-mode {
+            display: none;
+            align-items: center;
+            padding: 10px 16px;
+            background: white;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+        }
+        
+        .batch-title {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 500;
+            color: #1a3a8f;
+        }
+        
+        .batch-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .batch-btn {
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .batch-btn.select-all {
+            background: #f0f9ff;
+            color: #1890ff;
+            border: 1px solid rgba(24, 144, 255, 0.3);
+        }
+        
+        .batch-btn.delete-selected {
+            background: #fff1f0;
+            color: #ff4d4f;
+            border: 1px solid rgba(255, 77, 79, 0.3);
+        }
+        
+        .batch-btn.cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        /* 复选框样式 - 始终显示但初始为灰色 */
+        .history-checkbox {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #d9d9d9;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            z-index: 2;
+            display: none; /* 默认隐藏，批量模式下显示 */
+        }
+        
+        .batch-mode-active .history-checkbox {
+            display: block;
+        }
+        
+        .history-checkbox:checked {
+            background: #1890ff;
+            border-color: #1890ff;
+        }
+        
+        .history-checkbox:checked::after {
+            content: "✓";
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .batch-mode-active .history-item {
+            padding-right: 44px; /* 为右上角复选框留出空间 */
+        }
+        
+        /* 调整批量模式下删除按钮隐藏 */
+        .batch-mode-active .delete-btn {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 顶部导航栏 -->
+        <div class="navbar">
+            <div class="back-btn" onclick="goBack()">‹</div>
+            <div class="navbar-title">历史对话</div>
+            <div class="trash-bin-btn" id="trashBinBtn">
+                🗑️
+                <div class="clear-options" id="clearOptions">
+                    <div class="clear-option" onclick="enterBatchMode()">
+                        <span>🗂️</span> <!-- 碎纸机图标 -->
+                        <span>批量删除</span>
+                    </div>
+                    <div class="clear-option delete-all" onclick="showClearAllConfirm()">
+                        <span>🔥</span> <!-- 焚烧图标 -->
+                        <span>清空全部</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 批量选择模式 -->
+        <div class="batch-mode" id="batchMode">
+            <div class="batch-title" id="selectedCount">已选择 0 项</div>
+            <div class="batch-actions">
+                <button class="batch-btn select-all" onclick="toggleSelectAll()">全选本页</button>
+                <button class="batch-btn delete-selected" onclick="showDeleteSelectedConfirm()">删除所选</button>
+                <button class="batch-btn cancel" onclick="exitBatchMode()">取消</button>
+            </div>
+        </div>
+        
+        <!-- 搜索框区域 -->
+        <div class="search-container">
+            <input 
+                type="text" 
+                class="search-input" 
+                id="searchInput" 
+                placeholder="搜索历史问题..." 
+                oninput="searchHistory()"
+            >
+        </div>
+        
+        <!-- 历史对话列表 -->
+        <div class="history-container" id="historyContainer">
+            <!-- 历史列表将在这里动态生成 -->
+            <div class="empty-history" id="emptyHistory">
+                <div class="empty-icon">📝</div>
+                <div class="empty-text">暂无历史对话记录</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+        <div class="tab-item" onclick="goToIndex()">
+            <div class="tab-icon home-icon">🏠</div>
+            <div>首页</div>
+        </div>
+        <div class="tab-item" onclick="goToResources()">
+            <div class="tab-icon resources-icon">📚</div>
+            <div>资源</div>
+        </div>
+        <div class="tab-item" onclick="goToCommunity()">
+            <div class="tab-icon community-icon">👥</div>
+            <div>社区</div>
+        </div>
+        <div class="tab-item" onclick="goToProfile()">
+            <div class="tab-icon profile-icon">👤</div>
+            <div>我的</div>
+        </div>
+    </div>
+    
+    <!-- 确认对话框 -->
+    <div class="confirm-dialog" id="confirmDialog">
+        <div class="confirm-content">
+            <div class="confirm-title" id="confirmTitle">确认删除</div>
+            <div class="confirm-message" id="confirmMessage">您确定要删除这条历史对话吗？</div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn cancel" onclick="closeConfirmDialog()">取消</button>
+                <button class="confirm-btn delete" onclick="performDelete()">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let historyData = [];
+        let filteredData = [];
+        let selectedItems = new Set();
+        let isBatchMode = false;
+        let deleteMode = 'single'; // 'single', 'selected', 'all'
+        let itemToDelete = null;
+        
+        // 页面跳转函数
+        function goBack() {
+            window.history.back();
+        }
+        
+        function goToIndex() {
+            window.location.href = "index.html";
+        }
+        
+        function goToResources() {
+            window.location.href = "knowledge.html";
+        }
+        
+        function goToCommunity() {
+            window.location.href = "community.html";
+        }
+        
+        function goToProfile() {
+            window.location.href = "profile.html";
+        }
+        
+        // 显示/隐藏清空选项
+        document.getElementById('trashBinBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const options = document.getElementById('clearOptions');
+            options.style.display = options.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        // 点击外部关闭清空选项
+        document.addEventListener('click', function() {
+            document.getElementById('clearOptions').style.display = 'none';
+        });
+        
+        // 加载历史数据
+        function loadHistoryData() {
+            // 从localStorage加载历史记录，模拟数据
+            const savedHistory = localStorage.getItem('chatHistory');
+            
+            if (savedHistory) {
+                try {
+                    const parsedHistory = JSON.parse(savedHistory);
+                    // 限制最多100条
+                    historyData = parsedHistory.slice(0, 100);
+                } catch (e) {
+                    console.error('解析历史记录失败:', e);
+                    historyData = [];
+                }
+            } else {
+                // 如果没有历史记录，生成一些示例数据
+                historyData = generateSampleHistory();
+            }
+            
+            // 按时间倒序排列
+            historyData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            filteredData = [...historyData];
+            renderHistoryList();
+        }
+        
+        // 生成示例历史数据
+        function generateSampleHistory() {
+            const sampleData = [];
+            const questions = [
+                "如何进行PCB的热可靠性设计？",
+                "电子元器件的降额标准是什么？",
+                "请分析这个可靠性测试报告的问题",
+                "电子产品环境试验的标准有哪些？",
+                "如何计算MTBF和失效率？",
+                "请教一下电子产品的防腐蚀设计要点",
+                "高温环境下的元器件选型注意事项",
+                "可靠性增长试验的规划方法",
+                "电子产品振动测试的标准和等级",
+                "FMEA分析在可靠性设计中的应用",
+                "请教一下热仿真分析的基本流程",
+                "电子产品的密封性测试方法",
+                "如何评估电子元器件的寿命？",
+                "请教一下加速寿命试验的设计",
+                "电子产品可靠性预计的常用方法"
+            ];
+            
+            const answers = [
+                "PCB热可靠性设计需要考虑散热路径、铜箔分布、热源布局等因素，确保在高温环境下电子元器件的稳定运行。通常建议使用热仿真软件进行分析，并根据结果优化PCB布局和散热设计。",
+                "电子元器件降额标准通常包括电压、电流、功率和温度的降额要求。降额设计可以提高元器件的可靠性，延长使用寿命，特别是在恶劣环境条件下。",
+                "根据您提供的测试报告，我发现了几个可靠性问题，包括温度循环测试中的焊点开裂、湿热环境下的绝缘电阻下降等。建议加强这些方面的质量控制。",
+                "电子产品环境试验标准主要包括高温、低温、湿热、振动、冲击等。常见的标准有IEC 60068、MIL-STD-810、GB/T 2423等系列标准，根据产品应用领域选择相应标准。",
+                "MTBF（平均无故障时间）的计算需要考虑失效率、工作环境、应力水平等因素。常用方法有元器件计数法、应力分析法和现场数据统计法，需要结合具体产品特点选择合适方法。",
+                "电子产品的防腐蚀设计需要从材料选择、表面处理、密封防护等方面考虑。建议使用耐腐蚀材料、增加防护涂层、采用密封结构等措施提高产品的耐腐蚀性能。",
+                "高温环境下的元器件选型需要注意温度等级、热特性、封装形式等。建议选择高温等级器件，优化散热设计，考虑热膨胀系数匹配等问题。",
+                "可靠性增长试验通常采用试验-分析-改进的循环模式，重点关注故障模式识别、根本原因分析和改进措施验证。常用的方法有Duane模型和AMSAA模型。",
+                "振动测试的标准包括正弦振动、随机振动，等级根据应用环境确定。常见的振动标准有IEC 60068-2-6、MIL-STD-810等，需要根据产品实际使用环境选择测试条件。",
+                "FMEA分析可以系统性地识别潜在故障模式，评估其影响和发生概率。在产品设计阶段进行FMEA分析，可以有效预防故障发生，提高产品可靠性。",
+                "热仿真分析的基本流程包括建模、网格划分、边界条件设置、求解和后处理。通过热仿真可以预测产品温度分布，优化散热设计，提高热可靠性。",
+                "电子产品密封性测试方法包括气压法、水压法、氦质谱检漏法等。根据产品密封等级要求选择合适的测试方法，确保产品在恶劣环境下的可靠性。",
+                "电子元器件寿命评估可以采用加速寿命试验、可靠性预计、现场数据统计等方法。需要考虑工作应力、环境条件、失效机理等因素，综合评估元器件寿命。",
+                "加速寿命试验设计需要确定加速应力、试验样本量、失效判据和数据分析方法。常用加速应力有温度、湿度、电压等，需要根据失效机理选择合适的加速模型。",
+                "可靠性预计常用方法包括元器件计数法、应力分析法、相似产品法等。需要收集元器件失效率数据，考虑应用环境和工作条件，进行可靠性定量评估。"
+            ];
+            
+            const now = new Date();
+            
+            for (let i = 0; i < 8; i++) {
+                const date = new Date(now);
+                date.setDate(date.getDate() - i);
+                date.setHours(10 + i, 30 + i * 5, 0);
+                
+                const questionIndex = i % questions.length;
+                
+                sampleData.push({
+                    id: `history_${i}`,
+                    timestamp: date.toISOString(),
+                    userMessage: questions[questionIndex],
+                    aiResponse: answers[questionIndex],
+                    files: i % 3 === 0 ? [{name: '测试报告.pdf', size: '1.2MB'}] : []
+                });
+            }
+            
+            return sampleData;
+        }
+        
+        // 渲染历史列表
+        function renderHistoryList() {
+            const container = document.getElementById('historyContainer');
+            const emptyHistory = document.getElementById('emptyHistory');
+            
+            if (filteredData.length === 0) {
+                container.innerHTML = '';
+                container.appendChild(emptyHistory);
+                emptyHistory.style.display = 'flex';
+                return;
+            }
+            
+            emptyHistory.style.display = 'none';
+            
+            const listContainer = document.createElement('div');
+            listContainer.className = 'history-list';
+            
+            filteredData.forEach(item => {
+                const historyItem = createHistoryItem(item);
+                listContainer.appendChild(historyItem);
+            });
+            
+            container.innerHTML = '';
+            container.appendChild(listContainer);
+        }
+        
+        // 创建历史项
+        function createHistoryItem(item) {
+            const date = new Date(item.timestamp);
+            const timeStr = formatDate(date);
+            
+            // 提取问题摘要（前20字）
+            const questionSummary = item.userMessage.length > 20 
+                ? item.userMessage.substring(0, 20) + '...' 
+                : item.userMessage;
+            
+            // 提取回答预览（前60字，因为现在可以显示两行）
+            let answerText = item.aiResponse;
+            if (typeof answerText === 'string') {
+                // 如果是HTML，提取文本
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = answerText;
+                answerText = tempDiv.textContent || tempDiv.innerText || '';
+            }
+            
+            const answerPreview = answerText.length > 60 
+                ? answerText.substring(0, 60) + '...' 
+                : answerText;
+            
+            const itemElement = document.createElement('div');
+            itemElement.className = 'history-item';
+            itemElement.dataset.id = item.id;
+            
+            if (isBatchMode) {
+                itemElement.classList.add('batch-mode-active');
+            }
+            
+            // 创建复选框，初始状态为未选中（灰色）
+            const isChecked = selectedItems.has(item.id);
+            
+            itemElement.innerHTML = `
+                <input type="checkbox" class="history-checkbox" id="checkbox_${item.id}" ${isChecked ? 'checked' : ''}>
+                <div class="history-question">${questionSummary}</div>
+                <div class="history-answer">${answerPreview}</div>
+                <div class="history-footer">
+                    <div class="history-time">${timeStr}</div>
+                    ${!isBatchMode ? `<div class="delete-btn" onclick="showDeleteConfirm('${item.id}', event)">🗑️</div>` : ''}
+                </div>
+            `;
+            
+            // 如果不是批量模式，添加点击事件
+            if (!isBatchMode) {
+                itemElement.addEventListener('click', function(e) {
+                    // 如果不是点击删除按钮
+                    if (!e.target.closest('.delete-btn') && !e.target.closest('.history-checkbox')) {
+                        openHistoryDetail(item.id);
+                    }
+                });
+            }
+            
+            // 为复选框添加事件监听器
+            const checkbox = itemElement.querySelector(`#checkbox_${item.id}`);
+            if (checkbox) {
+                checkbox.addEventListener('change', function() {
+                    toggleSelection(item.id);
+                });
+            }
+            
+            return itemElement;
+        }
+        
+        // 格式化日期
+        function formatDate(date) {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            
+            if (targetDate.getTime() === today.getTime()) {
+                return `今天 ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+            } else if (targetDate.getTime() === yesterday.getTime()) {
+                return `昨天 ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+            } else {
+                return `${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+            }
+        }
+        
+        // 搜索历史
+        function searchHistory() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                filteredData = [...historyData];
+            } else {
+                filteredData = historyData.filter(item => {
+                    const question = item.userMessage.toLowerCase();
+                    const answer = typeof item.aiResponse === 'string' 
+                        ? item.aiResponse.toLowerCase() 
+                        : '';
+                    
+                    return question.includes(searchTerm) || answer.includes(searchTerm);
+                });
+            }
+            
+            renderHistoryList();
+        }
+        
+        // 显示删除确认对话框
+        function showDeleteConfirm(itemId, event) {
+            if (event) {
+                event.stopPropagation(); // 防止触发条目的点击事件
+            }
+            itemToDelete = itemId;
+            deleteMode = 'single';
+            
+            document.getElementById('confirmTitle').textContent = '确认删除';
+            document.getElementById('confirmMessage').textContent = '您确定要删除这条历史对话吗？删除后无法恢复。';
+            document.getElementById('confirmDialog').style.display = 'flex';
+        }
+        
+        // 显示清空全部确认对话框
+        function showClearAllConfirm() {
+            deleteMode = 'all';
+            
+            document.getElementById('confirmTitle').textContent = '清空全部历史';
+            document.getElementById('confirmMessage').textContent = '您确定要清空全部历史对话吗？此操作不可撤销。';
+            document.getElementById('confirmDialog').style.display = 'flex';
+        }
+        
+        // 显示删除所选确认对话框
+        function showDeleteSelectedConfirm() {
+            if (selectedItems.size === 0) {
+                alert('请先选择要删除的对话');
+                return;
+            }
+            
+            deleteMode = 'selected';
+            
+            document.getElementById('confirmTitle').textContent = '删除所选对话';
+            document.getElementById('confirmMessage').textContent = `您确定要删除选中的 ${selectedItems.size} 条历史对话吗？删除后无法恢复。`;
+            document.getElementById('confirmDialog').style.display = 'flex';
+        }
+        
+        // 关闭确认对话框
+        function closeConfirmDialog() {
+            document.getElementById('confirmDialog').style.display = 'none';
+            itemToDelete = null;
+        }
+        
+        // 执行删除操作
+        function performDelete() {
+            if (deleteMode === 'single') {
+                // 删除单条
+                historyData = historyData.filter(item => item.id !== itemToDelete);
+                filteredData = filteredData.filter(item => item.id !== itemToDelete);
+                selectedItems.delete(itemToDelete);
+            } else if (deleteMode === 'selected') {
+                // 删除所选
+                historyData = historyData.filter(item => !selectedItems.has(item.id));
+                filteredData = filteredData.filter(item => !selectedItems.has(item.id));
+                selectedItems.clear();
+                exitBatchMode();
+            } else if (deleteMode === 'all') {
+                // 清空全部
+                historyData = [];
+                filteredData = [];
+                selectedItems.clear();
+            }
+            
+            // 保存到localStorage
+            localStorage.setItem('chatHistory', JSON.stringify(historyData));
+            
+            // 重新渲染列表
+            renderHistoryList();
+            
+            // 更新选中计数
+            updateSelectedCount();
+            
+            // 关闭对话框
+            closeConfirmDialog();
+        }
+        
+        // 进入批量选择模式
+        function enterBatchMode() {
+            isBatchMode = true;
+            document.getElementById('batchMode').style.display = 'flex';
+            document.getElementById('clearOptions').style.display = 'none';
+            
+            // 清空之前可能存在的选中项
+            selectedItems.clear();
+            
+            // 重新渲染列表以显示复选框
+            renderHistoryList();
+            
+            // 更新选中计数
+            updateSelectedCount();
+        }
+        
+        // 退出批量选择模式
+        function exitBatchMode() {
+            isBatchMode = false;
+            selectedItems.clear(); // 清空选中项
+            
+            document.getElementById('batchMode').style.display = 'none';
+            document.getElementById('clearOptions').style.display = 'none';
+            
+            // 重新渲染列表以隐藏复选框和清除选中状态
+            renderHistoryList();
+            
+            // 更新选中计数
+            updateSelectedCount();
+        }
+        
+        // 切换选择项
+        function toggleSelection(itemId) {
+            if (selectedItems.has(itemId)) {
+                selectedItems.delete(itemId);
+            } else {
+                selectedItems.add(itemId);
+            }
+            
+            // 更新选中计数
+            updateSelectedCount();
+        }
+        
+        // 全选/取消全选本页
+        function toggleSelectAll() {
+            // 检查是否已全选本页
+            let allSelected = true;
+            for (const item of filteredData) {
+                if (!selectedItems.has(item.id)) {
+                    allSelected = false;
+                    break;
+                }
+            }
+            
+            if (allSelected) {
+                // 如果已全选，则取消全选
+                selectedItems.clear();
+            } else {
+                // 否则全选本页
+                selectedItems.clear();
+                filteredData.forEach(item => {
+                    selectedItems.add(item.id);
+                });
+            }
+            
+            // 重新渲染列表以更新复选框状态
+            renderHistoryList();
+            
+            // 更新选中计数
+            updateSelectedCount();
+        }
+        
+        // 更新选中计数
+        function updateSelectedCount() {
+            document.getElementById('selectedCount').textContent = `已选择 ${selectedItems.size} 项`;
+        }
+        
+        // 打开历史对话详情（回到index.html并显示该对话）
+        function openHistoryDetail(itemId) {
+            // 在实际应用中，这里会跳转到index.html并传递itemId参数
+            // 例如：window.location.href = `index.html?historyId=${itemId}`;
+            
+            // 为了演示，我们显示一个提示
+            alert(`即将跳转到对话详情页，显示ID为 ${itemId} 的历史对话\n\n在实际应用中，这里会跳转到index.html并加载对应的历史对话`);
+            
+            // 模拟跳转
+            setTimeout(() => {
+                goToIndex();
+            }, 500);
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = function() {
+            loadHistoryData();
+            
+            // 点击外部关闭清空选项
+            document.addEventListener('click', function(e) {
+                const clearOptions = document.getElementById('clearOptions');
+                const clearBtn = document.getElementById('trashBinBtn');
+                
+                if (!clearBtn.contains(e.target) && !clearOptions.contains(e.target)) {
+                    clearOptions.style.display = 'none';
+                }
+            });
+        };
+    </script>
+</body>
+</html>

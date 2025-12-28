@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>社区 - 可靠性AI助手</title>
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+            background-color: #f8fafd;
+            color: #333;
+            line-height: 1.5;
+            max-width: 390px;
+            margin: 0 auto;
+            min-height: 844px;
+            position: relative;
+            overflow: hidden; /* 改为与index.html一致 */
+        }
+        
+        /* 主容器 - 添加与index.html一致的布局 */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 50px); /* 减去底部导航栏高度 */
+        }
+        
+        /* 科技感装饰元素 */
+        .tech-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 顶部导航栏 - 居中 */
+        .navbar {
+            height: 44px;
+            padding: 0 16px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+            position: relative;
+        }
+        
+        .navbar-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            position: absolute;
+            right: 16px;
+        }
+        
+        /* 主内容区域 - 修改为与index.html一致的可滚动布局 */
+        .main-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 社区分类区域 - 顶部 */
+        .community-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        /* 查看全部链接样式 - 可点击 */
+        .view-all {
+            font-size: 13px;
+            color: #1890ff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .view-all:hover {
+            background: rgba(24, 144, 255, 0.1);
+        }
+        
+        /* 发起话题按钮 - 在分类标题右侧 */
+        .create-topic-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+        }
+        
+        .create-topic-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
+        }
+        
+        /* 社区图标网格 - 一行4个 */
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        .community-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 8px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .community-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(24, 144, 255, 0.1);
+            border-color: rgba(24, 144, 255, 0.3);
+        }
+        
+        .community-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+        
+        /* 不同图标的颜色方案 */
+        .community-1 .community-icon {
+            background: linear-gradient(135deg, #ff4d4f 0%, #cf1322 100%);
+            color: white;
+        }
+        
+        .community-2 .community-icon {
+            background: linear-gradient(135deg, #ffa940 0%, #d46b08 100%);
+            color: white;
+        }
+        
+        .community-3 .community-icon {
+            background: linear-gradient(135deg, #73d13d 0%, #389e0d 100%);
+            color: white;
+        }
+        
+        .community-4 .community-icon {
+            background: linear-gradient(135deg, #36cfc9 0%, #08979c 100%);
+            color: white;
+        }
+        
+        .community-5 .community-icon {
+            background: linear-gradient(135deg, #597ef7 0%, #1d39c4 100%);
+            color: white;
+        }
+        
+        .community-6 .community-icon {
+            background: linear-gradient(135deg, #9254de 0%, #531dab 100%);
+            color: white;
+        }
+        
+        .community-7 .community-icon {
+            background: linear-gradient(135deg, #f759ab 0%, #c41d7f 100%);
+            color: white;
+        }
+        
+        .community-8 .community-icon {
+            background: linear-gradient(135deg, #ff7a45 0%, #d4380d 100%);
+            color: white;
+        }
+        
+        .community-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        
+        .community-count {
+            font-size: 11px;
+            color: #999;
+        }
+        
+        /* 热门话题区域 */
+        .hot-topics-section {
+            margin-bottom: 24px;
+        }
+        
+        .hot-topics-list {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e8e8e8;
+            overflow: hidden;
+        }
+        
+        .hot-topic-item {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .hot-topic-item:last-child {
+            border-bottom: none;
+        }
+        
+        .hot-topic-item:hover {
+            background: #f8fafd;
+        }
+        
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .topic-author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        
+        .topic-info {
+            flex: 1;
+        }
+        
+        .topic-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1a3a8f;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        
+        .topic-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .topic-tag {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            background: #f0f9ff;
+            color: #1890ff;
+            border: 1px solid rgba(24, 144, 255, 0.3);
+        }
+        
+        .topic-meta {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+            gap: 12px;
+        }
+        
+        .topic-category {
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #f6ffed;
+            color: #52c41a;
+            border: 1px solid rgba(82, 196, 26, 0.3);
+        }
+        
+        .topic-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .topic-stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* 专家在线区域 */
+        .experts-section {
+            margin-bottom: 24px;
+        }
+        
+        .experts-list {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .expert-card {
+            flex: 0 0 160px;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .expert-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(24, 144, 255, 0.1);
+            border-color: rgba(24, 144, 255, 0.3);
+        }
+        
+        .expert-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .expert-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        
+        .expert-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 4px;
+        }
+        
+        .expert-title {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .expert-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        
+        .expert-tag {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            background: #f6ffed;
+            color: #52c41a;
+            border: 1px solid rgba(82, 196, 26, 0.3);
+        }
+        
+        .expert-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+        }
+        
+        .status-online {
+            color: #52c41a;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #52c41a;
+            border-radius: 50%;
+        }
+        
+        .consult-btn {
+            padding: 4px 8px;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        /* 底部导航栏 - 与index.html完全一致 */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            height: 50px;
+            background-color: #ffffff;
+            display: flex;
+            border-top: 1px solid #e5e5e5;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #999;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .tab-item.active {
+            color: #1890ff;
+        }
+        
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px; /* 图标大小 */
+        }
+        
+        /* 底部导航栏图标 - 使用emoji图标保持一致性 */
+        .home-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        .resources-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        .community-icon {
+            color: #1890ff; /* 激活状态颜色 */
+        }
+        
+        .profile-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        /* 模态框样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 340px;
+            max-width: 90%;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .modal-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 16px;
+            font-size: 15px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            color: #333;
+            outline: none;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-input:focus {
+            border-color: #1890ff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+        }
+        
+        .modal-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px 16px;
+            font-size: 15px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            color: #333;
+            outline: none;
+            margin-bottom: 16px;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-textarea:focus {
+            border-color: #1890ff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+        }
+        
+        .tag-selector {
+            margin-bottom: 20px;
+        }
+        
+        .tag-selector-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .tag-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .tag-option {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            background: #f8fafd;
+            color: #666;
+            border: 1px solid #e8e8e8;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .tag-option:hover {
+            background: #e6f7ff;
+            color: #1890ff;
+            border-color: #1890ff;
+        }
+        
+        .tag-option.selected {
+            background: #1890ff;
+            color: white;
+            border-color: #1890ff;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-btn.cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        .modal-btn.cancel:hover {
+            background: #e8e8e8;
+        }
+        
+        .modal-btn.submit {
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+        }
+        
+        .modal-btn.submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+        }
+        
+        /* 加载状态 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            color: #d9d9d9;
+            margin-bottom: 16px;
+        }
+        
+        .empty-text {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* 创建科技感装饰元素 */
+        .tech-decoration {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 滚动条样式 - 与index.html一致 */
+        .main-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .main-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb {
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 2px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(24, 144, 255, 0.3);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 390px) {
+            .community-grid {
+                gap: 8px;
+            }
+            
+            .community-item {
+                padding: 12px 6px;
+            }
+            
+            .expert-card {
+                flex: 0 0 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器 - 添加与index.html一致的布局 -->
+    <div class="main-container">
+        <!-- 科技感装饰元素 -->
+        <div class="tech-decoration" id="techDecoration"></div>
+        
+        <!-- 顶部导航栏 -->
+        <div class="navbar">
+            <div class="navbar-title">社区中心</div>
+            <div class="user-avatar" onclick="goToProfile()">张</div>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <!-- 社区分类区域 - 顶部 -->
+            <div class="community-section">
+                <div class="section-header">
+                    <div class="section-title">社区分类</div>
+                    <button class="create-topic-btn" onclick="openCreateTopicModal()">
+                        <span>+</span> 发起话题
+                    </button>
+                </div>
+                
+                <div class="community-grid" id="communityGrid">
+                    <!-- 社区分类将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 热门话题区域 -->
+            <div class="hot-topics-section">
+                <div class="section-header">
+                    <div class="section-title">热门话题</div>
+                    <div class="view-all" onclick="viewAllTopics()">更多</div>
+                </div>
+                
+                <div class="hot-topics-list" id="hotTopicsList">
+                    <!-- 热门话题将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 专家在线区域 -->
+            <div class="experts-section">
+                <div class="section-header">
+                    <div class="section-title">专家在线</div>
+                    <div class="view-all" onclick="goToAllExperts()">全部专家</div>
+                </div>
+                
+                <div class="experts-list" id="expertsList">
+                    <!-- 专家列表将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 加载状态 -->
+            <div class="loading" id="loading">
+                加载中...
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+        <div class="tab-item" onclick="goToIndex()">
+            <div class="tab-icon home-icon">🏠</div>
+            <div>首页</div>
+        </div>
+        <div class="tab-item" onclick="goToResources()">
+            <div class="tab-icon resources-icon">📚</div>
+            <div>资源</div>
+        </div>
+        <div class="tab-item active">
+            <div class="tab-icon community-icon">👥</div>
+            <div>社区</div>
+        </div>
+        <div class="tab-item" onclick="goToProfile()">
+            <div class="tab-icon profile-icon">👤</div>
+            <div>我的</div>
+        </div>
+    </div>
+    
+    <!-- 创建话题模态框 -->
+    <div class="modal-overlay" id="createTopicModal">
+        <div class="modal-content">
+            <div class="modal-title">发起新话题</div>
+            <input 
+                type="text" 
+                class="modal-input" 
+                id="topicTitle" 
+                placeholder="请输入话题标题"
+            >
+            <textarea 
+                class="modal-textarea" 
+                id="topicContent" 
+                placeholder="请输入您的想法和问题描述..."
+                rows="4"
+            ></textarea>
+            
+            <div class="tag-selector">
+                <div class="tag-selector-title">选择话题标签（可多选）</div>
+                <div class="tag-options" id="tagOptions">
+                    <!-- 标签选项将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeCreateTopicModal()">取消</button>
+                <button class="modal-btn submit" onclick="submitTopic()">发布话题</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let communityCategories = [];
+        let hotTopics = [];
+        let experts = [];
+        let selectedTags = [];
+        
+        // 创建科技感装饰元素
+        function createTechDecoration() {
+            const decoration = document.getElementById('techDecoration');
+            const dotsCount = 30;
+            
+            for (let i = 0; i < dotsCount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'tech-dot';
+                
+                // 随机位置
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const size = 2 + Math.random() * 4;
+                const opacity = 0.1 + Math.random() * 0.2;
+                
+                dot.style.left = `${left}%`;
+                dot.style.top = `${top}%`;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                dot.style.opacity = opacity;
+                dot.style.background = `rgba(${24 + Math.random() * 100}, ${144 + Math.random() * 50}, 255, ${opacity})`;
+                
+                decoration.appendChild(dot);
+            }
+        }
+        
+        // 页面跳转函数
+        function goToIndex() {
+            window.location.href = "index.html";
+        }
+        
+        function goToResources() {
+            window.location.href = "knowledge.html";
+        }
+        
+        function goToProfile() {
+            window.location.href = "profile.html";
+        }
+        
+        // 跳转到全部专家页面
+        function goToAllExperts() {
+            window.location.href = "ask_expert.html";
+        }
+        
+        // 初始化社区数据
+        function initCommunityData() {
+            // 社区分类数据
+            communityCategories = [
+                {
+                    id: 1,
+                    name: "PCB设计",
+                    icon: "🔌",
+                    description: "PCB设计与可靠性",
+                    colorClass: "community-1",
+                    count: 128
+                },
+                {
+                    id: 2,
+                    name: "热管理",
+                    icon: "🔥",
+                    description: "热设计与散热技术",
+                    colorClass: "community-2",
+                    count: 89
+                },
+                {
+                    id: 3,
+                    name: "失效分析",
+                    icon: "🔍",
+                    description: "失效机理与分析方法",
+                    colorClass: "community-3",
+                    count: 67
+                },
+                {
+                    id: 4,
+                    name: "环境试验",
+                    icon: "🌡️",
+                    description: "环境适应性测试",
+                    colorClass: "community-4",
+                    count: 54
+                },
+                {
+                    id: 5,
+                    name: "元器件",
+                    icon: "💡",
+                    description: "元器件选型与应用",
+                    colorClass: "community-5",
+                    count: 231
+                },
+                {
+                    id: 6,
+                    name: "标准规范",
+                    icon: "📋",
+                    description: "可靠性标准解读",
+                    colorClass: "community-6",
+                    count: 156
+                },
+                {
+                    id: 7,
+                    name: "FMEA",
+                    icon: "⚠️",
+                    description: "失效模式与影响分析",
+                    colorClass: "community-7",
+                    count: 42
+                },
+                {
+                    id: 8,
+                    name: "新手求助",
+                    icon: "🙋",
+                    description: "新手问题与解答",
+                    colorClass: "community-8",
+                    count: 312
+                }
+            ];
+            
+            // 渲染社区分类
+            renderCommunityCategories();
+            
+            // 初始化热门话题
+            initHotTopics();
+            
+            // 初始化专家列表
+            initExperts();
+            
+            // 初始化标签选项
+            initTagOptions();
+        }
+        
+        // 渲染社区分类
+        function renderCommunityCategories() {
+            const grid = document.getElementById('communityGrid');
+            grid.innerHTML = '';
+            
+            communityCategories.forEach(category => {
+                const item = document.createElement('div');
+                item.className = `community-item ${category.colorClass}`;
+                item.onclick = () => openCategory(category);
+                
+                item.innerHTML = `
+                    <div class="community-icon">${category.icon}</div>
+                    <div class="community-name">${category.name}</div>
+                    <div class="community-count">(${category.count})</div>
+                `;
+                
+                grid.appendChild(item);
+            });
+        }
+        
+        // 初始化热门话题
+        function initHotTopics() {
+            hotTopics = [
+                {
+                    id: 1,
+                    title: "如何解决高频PCB的信号完整性问题？",
+                    author: "张工",
+                    authorAvatar: "张",
+                    tags: ["PCB设计", "信号完整性", "高频电路"],
+                    category: "PCB设计",
+                    replies: 42,
+                    views: 1256,
+                    likes: 89,
+                    lastActive: "2小时前",
+                    hasAttachment: true
+                },
+                {
+                    id: 2,
+                    title: "高温环境下元器件降额设计的标准是什么？",
+                    author: "王工",
+                    authorAvatar: "王",
+                    tags: ["元器件", "降额设计", "高温环境"],
+                    category: "元器件",
+                    replies: 28,
+                    views: 892,
+                    likes: 54,
+                    lastActive: "5小时前",
+                    hasAttachment: false
+                },
+                {
+                    id: 3,
+                    title: "分享一个电源模块失效分析的典型案例",
+                    author: "李工",
+                    authorAvatar: "李",
+                    tags: ["失效分析", "电源模块", "案例分享"],
+                    category: "失效分析",
+                    replies: 35,
+                    views: 1103,
+                    likes: 67,
+                    lastActive: "昨天",
+                    hasAttachment: true
+                },
+                {
+                    id: 4,
+                    title: "电子产品三防设计的要点有哪些？",
+                    author: "赵工",
+                    authorAvatar: "赵",
+                    tags: ["环境试验", "三防设计", "可靠性"],
+                    category: "环境试验",
+                    replies: 19,
+                    views: 756,
+                    likes: 42,
+                    lastActive: "前天",
+                    hasAttachment: false
+                },
+                {
+                    id: 5,
+                    title: "FMEA在实际项目中的应用经验分享",
+                    author: "孙工",
+                    authorAvatar: "孙",
+                    tags: ["FMEA", "项目管理", "经验分享"],
+                    category: "FMEA",
+                    replies: 31,
+                    views: 987,
+                    likes: 58,
+                    lastActive: "3天前",
+                    hasAttachment: true
+                }
+            ];
+            
+            // 渲染热门话题
+            renderHotTopics();
+        }
+        
+        // 渲染热门话题
+        function renderHotTopics() {
+            const list = document.getElementById('hotTopicsList');
+            list.innerHTML = '';
+            
+            hotTopics.forEach(topic => {
+                const item = document.createElement('div');
+                item.className = 'hot-topic-item';
+                item.onclick = () => openTopic(topic);
+                
+                // 生成标签HTML
+                const tagsHtml = topic.tags.map(tag => 
+                    `<span class="topic-tag">${tag}</span>`
+                ).join('');
+                
+                item.innerHTML = `
+                    <div class="topic-header">
+                        <div class="topic-author-avatar">${topic.authorAvatar}</div>
+                        <div class="topic-info">
+                            <div class="topic-title">${topic.title}</div>
+                            <div class="topic-tags">${tagsHtml}</div>
+                            <div class="topic-meta">
+                                <span class="topic-category">${topic.category}</span>
+                                <span>${topic.author}</span>
+                                <div class="topic-stats">
+                                    <span class="topic-stat-item">💬 ${topic.replies}</span>
+                                    <span class="topic-stat-item">👁 ${topic.views}</span>
+                                    <span class="topic-stat-item">👍 ${topic.likes}</span>
+                                </div>
+                                <span>${topic.lastActive}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                list.appendChild(item);
+            });
+        }
+        
+        // 初始化专家列表
+        function initExperts() {
+            experts = [
+                {
+                    id: 1,
+                    name: "王明远",
+                    title: "可靠性工程专家",
+                    tags: ["热设计", "FMEA", "IPC标准"],
+                    status: "online",
+                    avatar: "王"
+                },
+                {
+                    id: 2,
+                    name: "李静",
+                    title: "失效分析专家",
+                    tags: ["失效分析", "SEM/EDS", "材料分析"],
+                    status: "online",
+                    avatar: "李"
+                },
+                {
+                    id: 3,
+                    name: "张建国",
+                    title: "环境试验专家",
+                    tags: ["环境试验", "振动测试", "HALT/HASS"],
+                    status: "busy",
+                    avatar: "张"
+                },
+                {
+                    id: 4,
+                    name: "刘芳",
+                    title: "电子元器件专家",
+                    tags: ["元器件", "降额设计", "寿命预测"],
+                    status: "offline",
+                    avatar: "刘"
+                }
+            ];
+            
+            // 渲染专家列表
+            renderExperts();
+        }
+        
+        // 渲染专家列表
+        function renderExperts() {
+            const list = document.getElementById('expertsList');
+            list.innerHTML = '';
+            
+            experts.forEach(expert => {
+                const card = document.createElement('div');
+                card.className = 'expert-card';
+                card.onclick = () => consultExpert(expert);
+                
+                // 根据状态设置显示
+                let statusText = "";
+                let statusClass = "";
+                
+                if (expert.status === "online") {
+                    statusText = "在线";
+                    statusClass = "status-online";
+                } else if (expert.status === "busy") {
+                    statusText = "忙碌";
+                    statusClass = "status-busy";
+                } else {
+                    statusText = "离线";
+                    statusClass = "status-offline";
+                }
+                
+                // 标签HTML
+                const tagsHtml = expert.tags.map(tag => 
+                    `<span class="expert-tag">${tag}</span>`
+                ).join('');
+                
+                card.innerHTML = `
+                    <div class="expert-header">
+                        <div class="expert-avatar">${expert.avatar}</div>
+                        <div>
+                            <div class="expert-name">${expert.name}</div>
+                            <div class="expert-title">${expert.title}</div>
+                        </div>
+                    </div>
+                    <div class="expert-tags">
+                        ${tagsHtml}
+                    </div>
+                    <div class="expert-status">
+                        <div class="${statusClass}">
+                            <div class="status-dot"></div>
+                            <span>${statusText}</span>
+                        </div>
+                        <button class="consult-btn" onclick="event.stopPropagation(); consultExpert(${expert.id})">咨询</button>
+                    </div>
+                `;
+                
+                list.appendChild(card);
+            });
+        }
+        
+        // 初始化标签选项
+        function initTagOptions() {
+            const tagOptions = [
+                "PCB设计", "热管理", "失效分析", "环境试验", 
+                "元器件", "标准规范", "FMEA", "信号完整性",
+                "电源设计", "EMC/EMI", "振动分析", "可靠性预测",
+                "新手求助", "经验分享", "案例分析", "技术讨论"
+            ];
+            
+            const container = document.getElementById('tagOptions');
+            container.innerHTML = '';
+            
+            tagOptions.forEach(tag => {
+                const option = document.createElement('div');
+                option.className = 'tag-option';
+                option.textContent = tag;
+                option.onclick = () => toggleTagSelection(option, tag);
+                container.appendChild(option);
+            });
+        }
+        
+        // 切换标签选择
+        function toggleTagSelection(element, tag) {
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                selectedTags = selectedTags.filter(t => t !== tag);
+            } else {
+                element.classList.add('selected');
+                selectedTags.push(tag);
+            }
+        }
+        
+        // 打开分类
+        function openCategory(category) {
+            alert(`进入 ${category.name} 分类\n\n${category.description}\n\n在实际应用中，这里会跳转到该分类的话题列表页面。`);
+        }
+        
+        // 打开话题
+        function openTopic(topic) {
+            alert(`打开话题: ${topic.title}\n\n作者: ${topic.author}\n标签: ${topic.tags.join(', ')}\n回复数: ${topic.replies}\n浏览量: ${topic.views}\n\n在实际应用中，这里会跳转到话题详情页面，用户可以参与讨论。`);
+        }
+        
+        // 咨询专家
+        function consultExpert(expertId) {
+            const expert = experts.find(e => e.id === expertId);
+            if (!expert) return;
+            
+            if (expert.status === "online") {
+                const confirmConsult = confirm(`您确定要咨询${expert.name}专家吗？\n\n专家专长: ${expert.tags.join(", ")}\n\n咨询费用: 50积分/次`);
+                if (confirmConsult) {
+                    alert(`正在为您连接${expert.name}专家...\n\n在实际应用中，这里会跳转到专家咨询页面。`);
+                }
+            } else if (expert.status === "busy") {
+                alert(`${expert.name}专家当前忙碌中，请稍后再试或选择其他专家。`);
+            } else {
+                alert(`${expert.name}专家当前不在线，您可以留言，专家上线后会尽快回复。`);
+            }
+        }
+        
+        // 打开创建话题模态框
+        function openCreateTopicModal() {
+            document.getElementById('createTopicModal').style.display = 'flex';
+        }
+        
+        // 关闭创建话题模态框
+        function closeCreateTopicModal() {
+            document.getElementById('createTopicModal').style.display = 'none';
+            // 清空表单
+            document.getElementById('topicTitle').value = '';
+            document.getElementById('topicContent').value = '';
+            // 清空选择的标签
+            selectedTags = [];
+            document.querySelectorAll('.tag-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+        }
+        
+        // 提交话题
+        function submitTopic() {
+            const title = document.getElementById('topicTitle').value.trim();
+            const content = document.getElementById('topicContent').value.trim();
+            
+            if (!title) {
+                alert('请输入话题标题');
+                return;
+            }
+            
+            if (!content) {
+                alert('请输入话题内容');
+                return;
+            }
+            
+            if (selectedTags.length === 0) {
+                alert('请选择至少一个话题标签');
+                return;
+            }
+            
+            // 模拟提交话题
+            alert(`话题发布成功！\n\n标题: ${title}\n标签: ${selectedTags.join(', ')}\n\nAI系统将自动分析您的话题内容，相关技术资料会被收集到知识库，待后台审核后可成为资源。\n\n您现在可以进入话题参与讨论。`);
+            
+            // 关闭模态框
+            closeCreateTopicModal();
+            
+            // 在实际应用中，这里会将话题提交到服务器
+            // 并刷新话题列表
+        }
+        
+        // 查看全部话题
+        function viewAllTopics() {
+            alert('在实际应用中，这里会跳转到全部话题列表页面。');
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = function() {
+            // 创建科技感装饰元素
+            createTechDecoration();
+            
+            // 初始化社区数据
+            initCommunityData();
+            
+            // 点击模态框外部关闭
+            document.getElementById('createTopicModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeCreateTopicModal();
+                }
+            });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>个人中心 - 可靠性AI助手</title>
+    <style>
+        /* 基础样式 - 与index.html完全一致 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+            background-color: #f8fafd;
+            color: #333;
+            line-height: 1.5;
+            max-width: 390px;
+            margin: 0 auto;
+            min-height: 844px;
+            position: relative;
+            overflow: hidden; /* 与index.html保持一致，不是overflow-x: hidden */
+        }
+        
+        /* 科技感装饰元素 */
+        .tech-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 顶部导航栏 - 与index.html完全一致 */
+        .navbar {
+            height: 44px;
+            padding: 0 16px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+            position: relative;
+        }
+        
+        .navbar-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+
+        
+        /* 主容器 - 与index.html保持一致的结构 */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 50px); /* 减去底部导航栏高度 */
+            overflow: hidden; /* 确保内容不会溢出 */
+        }
+        
+        /* 主内容区域 - 调整高度和滚动 */
+        .main-content {
+            flex: 1;
+            overflow-y: auto; /* 允许垂直滚动 */
+            -webkit-overflow-scrolling: touch; /* iOS平滑滚动 */
+            padding-bottom: 0; /* 移除原有的padding-bottom，由容器控制 */
+        }
+        
+        /* 滚动条样式 - 与index.html保持一致 */
+        .main-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .main-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb {
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 2px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(24, 144, 255, 0.3);
+        }
+        
+        /* 用户信息卡片 */
+        .user-info-card {
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            padding: 24px 20px;
+            color: white;
+            position: relative;
+        }
+        
+        .user-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            margin-right: 16px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .user-basic-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .user-id {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .edit-profile-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        /* 等级和积分信息 */
+        .level-points-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .level-info {
+            flex: 1;
+        }
+        
+        .level-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 6px;
+        }
+        
+        .level-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .points-info {
+            flex: 1;
+            text-align: right;
+        }
+        
+        .points-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 6px;
+        }
+        
+        .points-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        /* 今日收支信息 */
+        .daily-stats {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .daily-stat {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .daily-stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 6px;
+        }
+        
+        .daily-stat-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .daily-income {
+            color: #b7eb8f;
+        }
+        
+        .daily-expense {
+            color: #ff7875;
+        }
+        
+        /* 等级进度条 */
+        .level-progress {
+            margin-bottom: 20px;
+        }
+        
+        .level-progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .level-progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .level-progress-fill {
+            height: 100%;
+            background: #ffd666;
+            border-radius: 4px;
+            width: 65%;
+            transition: width 0.5s ease;
+        }
+        
+        .level-up-tip {
+            font-size: 11px;
+            opacity: 0.8;
+            text-align: center;
+            margin-top: 8px;
+        }
+        
+        /* 实名认证状态 */
+        .realname-status {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .realname-text {
+            font-size: 14px;
+        }
+        
+        .realname-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #52c41a;
+        }
+        
+        .realname-unverified {
+            background: #ffa940;
+        }
+        
+        /* 功能菜单区域 */
+        .menu-section {
+            padding: 0 16px;
+            padding-bottom: 16px; /* 添加底部padding，确保内容不被底部导航栏遮挡 */
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 20px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .menu-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #1890ff;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1);
+            border: 1px solid rgba(24, 144, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .menu-item:hover .menu-icon {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(24, 144, 255, 0.2);
+        }
+        
+        .menu-text {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+        
+        /* 功能列表 */
+        .function-list {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .function-item {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .function-item:last-child {
+            border-bottom: none;
+        }
+        
+        .function-item:hover {
+            background: #f8fafd;
+        }
+        
+        .function-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #f0f9ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+            color: #1890ff;
+        }
+        
+        .function-info {
+            flex: 1;
+        }
+        
+        .function-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .function-desc {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .function-arrow {
+            color: #999;
+            font-size: 14px;
+        }
+        
+        /* 专家面板 */
+        .expert-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .expert-panel-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .expert-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #ffa940 0%, #d46b08 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .expert-panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a8f;
+            flex: 1;
+        }
+        
+        .expert-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #ffa940;
+            color: white;
+        }
+        
+        .expert-info {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        
+        .expert-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .expert-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .expert-btn.apply {
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+        }
+        
+        .expert-btn.apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+        }
+        
+        .expert-btn.settings {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        .expert-btn.settings:hover {
+            background: #e8e8e8;
+        }
+        
+        /* 反馈面板 */
+        .feedback-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .feedback-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .feedback-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .feedback-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        .feedback-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        
+        .feedback-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .feedback-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+        }
+        
+        /* 底部导航栏 - 与index.html完全一致 */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            height: 50px;
+            background-color: #ffffff;
+            display: flex;
+            border-top: 1px solid #e5e5e5;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #999;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .tab-item.active {
+            color: #1890ff;
+        }
+        
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px; /* 图标大小 */
+        }
+        
+        /* 底部导航栏图标 - 使用emoji图标保持一致性 */
+        .home-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        .resources-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        .community-icon {
+            color: #999; /* 非激活状态颜色 */
+        }
+        
+        .profile-icon {
+            color: #1890ff; /* 激活状态颜色 */
+        }
+        
+        /* 模态框样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 340px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .modal-input-group {
+            margin-bottom: 16px;
+        }
+        
+        .modal-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .modal-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 16px;
+            font-size: 14px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            color: #333;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-input:focus {
+            border-color: #1890ff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+        }
+        
+        .modal-select {
+            width: 100%;
+            height: 44px;
+            padding: 0 16px;
+            font-size: 14px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            color: #333;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px 16px;
+            font-size: 14px;
+            background: #f8fafd;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            color: #333;
+            outline: none;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-textarea:focus {
+            border-color: #1890ff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-btn.cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        .modal-btn.cancel:hover {
+            background: #e8e8e8;
+        }
+        
+        .modal-btn.submit {
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+        }
+        
+        .modal-btn.submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+        }
+        
+        /* 积分充值选项 */
+        .points-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .points-option {
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .points-option:hover {
+            border-color: #1890ff;
+            background: #f0f9ff;
+        }
+        
+        .points-option.selected {
+            border-color: #1890ff;
+            background: #e6f7ff;
+        }
+        
+        .points-amount {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1890ff;
+            margin-bottom: 4px;
+        }
+        
+        .points-price {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .points-bonus {
+            font-size: 12px;
+            color: #52c41a;
+            margin-top: 4px;
+        }
+        
+        /* 交易记录样式 */
+        .transaction-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+        
+        .transaction-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+            color: white;
+        }
+        
+        .transaction-income .transaction-icon {
+            background: linear-gradient(135deg, #d9f7be 0%, #b7eb8f 100%);
+            color: #389e0d;
+        }
+        
+        .transaction-expense .transaction-icon {
+            background: linear-gradient(135deg, #ffccc7 0%, #ffa39e 100%);
+            color: #cf1322;
+        }
+        
+        .transaction-info {
+            flex: 1;
+        }
+        
+        .transaction-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .transaction-time {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .transaction-amount {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .transaction-income .transaction-amount {
+            color: #52c41a;
+        }
+        
+        .transaction-expense .transaction-amount {
+            color: #ff4d4f;
+        }
+        
+        /* 加载状态 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 390px) {
+            .menu-grid {
+                gap: 12px;
+            }
+            
+            .menu-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 科技感装饰元素 -->
+    <div class="tech-decoration" id="techDecoration"></div>
+    
+    <!-- 与index.html一致的主容器结构 -->
+    <div class="main-container">
+        <!-- 顶部导航栏 -->
+        <div class="navbar">
+            <div class="navbar-title">个人中心</div>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <!-- 用户信息卡片 -->
+            <div class="user-info-card">
+                <div class="user-header">
+                    <div class="user-avatar" id="userAvatar">张</div>
+                    <div class="user-basic-info">
+                        <div class="user-name" id="userName">张工程师</div>
+                        <div class="user-id">ID: RE2023001</div>
+                    </div>
+                </div>
+                <button class="edit-profile-btn" onclick="openEditProfileModal()">编辑资料</button>
+                
+                <!-- 等级和积分信息 -->
+                <div class="level-points-info">
+                    <div class="level-info">
+                        <div class="level-label">当前等级</div>
+                        <div class="level-value" id="userLevel">熟练工程师</div>
+                    </div>
+                    <div class="points-info">
+                        <div class="points-label">可用积分</div>
+                        <div class="points-value" id="userPoints">2,850</div>
+                    </div>
+                </div>
+                
+                <!-- 今日收支信息 -->
+                <div class="daily-stats">
+                    <div class="daily-stat">
+                        <div class="daily-stat-label">今日收入</div>
+                        <div class="daily-stat-value daily-income" id="dailyIncome">+50</div>
+                    </div>
+                    <div class="daily-stat">
+                        <div class="daily-stat-label">今日支出</div>
+                        <div class="daily-stat-value daily-expense" id="dailyExpense">-10</div>
+                    </div>
+                </div>
+                
+                <!-- 等级进度条 -->
+                <div class="level-progress">
+                    <div class="level-progress-header">
+                        <span>等级进度</span>
+                        <span>65%</span>
+                    </div>
+                    <div class="level-progress-bar">
+                        <div class="level-progress-fill" id="levelProgressFill"></div>
+                    </div>
+                    <div class="level-up-tip">还需1350积分升级到"高手工程师"</div>
+                </div>
+                
+                <!-- 实名认证状态 -->
+                <div class="realname-status">
+                    <div class="realname-text">实名认证状态</div>
+                    <div class="realname-badge" id="realnameBadge">已认证</div>
+                </div>
+            </div>
+            
+            <!-- 功能菜单区域 -->
+            <div class="menu-section">
+                <div class="menu-grid">
+                    <div class="menu-item" onclick="openRechargeModal()">
+                        <div class="menu-icon">💰</div>
+                        <div class="menu-text">充值积分</div>
+                    </div>
+                    <div class="menu-item" onclick="openCollectionPage()">
+                        <div class="menu-icon">⭐</div>
+                        <div class="menu-text">我的收藏</div>
+                    </div>
+                    <div class="menu-item" onclick="openFollowPage()">
+                        <div class="menu-icon">👁</div>
+                        <div class="menu-text">我的关注</div>
+                    </div>
+                </div>
+                
+                <!-- 功能列表 -->
+                <div class="function-list">
+                    <div class="function-item" onclick="openSecuritySettings()">
+                        <div class="function-icon">🔒</div>
+                        <div class="function-info">
+                            <div class="function-title">安全设置</div>
+                            <div class="function-desc">修改密码、登录方式管理</div>
+                        </div>
+                        <div class="function-arrow">›</div>
+                    </div>
+                    <div class="function-item" onclick="openRealnameAuth()">
+                        <div class="function-icon">🆔</div>
+                        <div class="function-info">
+                            <div class="function-title">实名认证</div>
+                            <div class="function-desc">认证后可获得1000积分奖励</div>
+                        </div>
+                        <div class="function-arrow">›</div>
+                    </div>
+                    <div class="function-item" onclick="openTransactionHistory()">
+                        <div class="function-icon">📊</div>
+                        <div class="function-info">
+                            <div class="function-title">交易记录</div>
+                            <div class="function-desc">查看积分收入和支出记录</div>
+                        </div>
+                        <div class="function-arrow">›</div>
+                    </div>
+                    <div class="function-item" onclick="openPointsRules()">
+                        <div class="function-icon">📘</div>
+                        <div class="function-info">
+                            <div class="function-title">积分规则</div>
+                            <div class="function-desc">查看积分规则和获取方式</div>
+                        </div>
+                        <div class="function-arrow">›</div>
+                    </div>
+                    <div class="function-item" onclick="openLevelRules()">
+                        <div class="function-icon">📈</div>
+                        <div class="function-info">
+                            <div class="function-title">等级规则</div>
+                            <div class="function-desc">查看等级规则和晋升条件</div>
+                        </div>
+                        <div class="function-arrow">›</div>
+                    </div>
+                    <div class="function-item" onclick="openMyQuestions()">
+                        <div class="function-icon">❓</div>
+                        <div class="function-info">
+                            <div class="function-title">我的问答</div>
+                            <div class="function-desc">查看我发起的提问和回答</div>
+                        </div>
+                        <div class="function-arrow">›</div>
+                    </div>
+                </div>
+                
+                <!-- 专家面板 -->
+                <div class="expert-panel">
+                    <div class="expert-panel-header">
+                        <div class="expert-icon">👨‍🔬</div>
+                        <div class="expert-panel-title">专家认证</div>
+                        <div class="expert-badge" id="expertBadge">普通用户</div>
+                    </div>
+                    <div class="expert-info" id="expertInfo">
+                        您目前是普通用户。成为专家后可以设置咨询收费，解答他人问题获得积分，提升行业影响力。
+                    </div>
+                    <div class="expert-actions" id="expertActions">
+                        <button class="expert-btn apply" onclick="openApplyExpertModal()">申请成为专家</button>
+                        <button class="expert-btn settings" onclick="openExpertSettings()" style="display: none;">专家设置</button>
+                    </div>
+                </div>
+                
+                <!-- 反馈面板 -->
+                <div class="feedback-panel">
+                    <div class="feedback-header">
+                        <div class="feedback-icon">💡</div>
+                        <div class="feedback-title">反馈建议</div>
+                    </div>
+                    <div class="feedback-desc">
+                        我们重视每一位用户的反馈，您的建议将帮助我们不断优化系统，提供更好的服务。
+                    </div>
+                    <button class="feedback-btn" onclick="openFeedbackModal()">提交反馈建议</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 - 与index.html完全一致 -->
+    <div class="tab-bar">
+        <div class="tab-item" onclick="goToIndex()">
+            <div class="tab-icon home-icon">🏠</div>
+            <div>首页</div>
+        </div>
+        <div class="tab-item" onclick="goToResources()">
+            <div class="tab-icon resources-icon">📚</div>
+            <div>资源</div>
+        </div>
+        <div class="tab-item" onclick="goToCommunity()">
+            <div class="tab-icon community-icon">👥</div>
+            <div>社区</div>
+        </div>
+        <div class="tab-item active">
+            <div class="tab-icon profile-icon">👤</div>
+            <div>我的</div>
+        </div>
+    </div>
+    
+    <!-- 编辑资料模态框 -->
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-title">编辑个人资料</div>
+            <div class="modal-input-group">
+                <label class="modal-label">昵称</label>
+                <input type="text" class="modal-input" id="editNickname" value="张工程师">
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">性别</label>
+                <select class="modal-select" id="editGender">
+                    <option value="male">男</option>
+                    <option value="female" selected>女</option>
+                    <option value="other">其他</option>
+                </select>
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">所在单位</label>
+                <input type="text" class="modal-input" id="editCompany" value="华为技术有限公司">
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">职务</label>
+                <input type="text" class="modal-input" id="editPosition" value="可靠性设计工程师">
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">地区</label>
+                <input type="text" class="modal-input" id="editRegion" value="广东省深圳市">
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">联系电话</label>
+                <input type="tel" class="modal-input" id="editPhone" value="13800138000">
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">电子邮箱</label>
+                <input type="email" class="modal-input" id="editEmail" value="zhang@huawei.com">
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeEditProfileModal()">取消</button>
+                <button class="modal-btn submit" onclick="saveProfile()">保存修改</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 充值积分模态框 -->
+    <div class="modal-overlay" id="rechargeModal">
+        <div class="modal-content">
+            <div class="modal-title">充值积分</div>
+            <div class="modal-input-group">
+                <label class="modal-label">选择充值金额</label>
+                <div class="points-options" id="pointsOptions">
+                    <!-- 充值选项将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">支付方式</label>
+                <select class="modal-select" id="paymentMethod">
+                    <option value="wechat">微信支付</option>
+                    <option value="alipay">支付宝</option>
+                    <option value="bank">银行卡</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeRechargeModal()">取消</button>
+                <button class="modal-btn submit" onclick="confirmRecharge()">立即支付</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 申请专家模态框 -->
+    <div class="modal-overlay" id="applyExpertModal">
+        <div class="modal-content">
+            <div class="modal-title">申请成为专家</div>
+            <div class="modal-input-group">
+                <label class="modal-label">专家介绍</label>
+                <textarea class="modal-textarea" id="expertIntro" placeholder="请简要介绍您的专业背景、工作经验和专长领域..."></textarea>
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">专长领域 (最多选择3个)</label>
+                <select class="modal-select" id="expertField" multiple style="height: 100px;">
+                    <option value="pcb">PCB设计与可靠性</option>
+                    <option value="thermal">热管理与散热设计</option>
+                    <option value="failure">失效分析与故障诊断</option>
+                    <option value="environment">环境试验与可靠性测试</option>
+                    <option value="components">元器件选型与应用</option>
+                    <option value="fmea">FMEA与可靠性预测</option>
+                    <option value="emc">EMC/EMI设计</option>
+                    <option value="signal">信号完整性分析</option>
+                </select>
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">申请等级</label>
+                <select class="modal-select" id="expertLevel">
+                    <option value="bronze">初级专家 (消耗500积分)</option>
+                    <option value="silver">中级专家 (消耗1000积分)</option>
+                    <option value="gold">高级专家 (消耗2000积分)</option>
+                </select>
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">咨询收费标准 (积分/30分钟)</label>
+                <input type="number" class="modal-input" id="consultPrice" value="100" min="50" max="500">
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeApplyExpertModal()">取消</button>
+                <button class="modal-btn submit" onclick="submitExpertApplication()">提交申请</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 反馈建议模态框 -->
+    <div class="modal-overlay" id="feedbackModal">
+        <div class="modal-content">
+            <div class="modal-title">反馈建议</div>
+            <div class="modal-input-group">
+                <label class="modal-label">反馈类型</label>
+                <select class="modal-select" id="feedbackType">
+                    <option value="bug">系统Bug</option>
+                    <option value="suggestion">功能建议</option>
+                    <option value="content">内容问题</option>
+                    <option value="other">其他反馈</option>
+                </select>
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">反馈内容</label>
+                <textarea class="modal-textarea" id="feedbackContent" placeholder="请详细描述您遇到的问题或建议..."></textarea>
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">联系方式 (可选)</label>
+                <input type="text" class="modal-input" id="feedbackContact" placeholder="邮箱/电话，方便我们回复您">
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeFeedbackModal()">取消</button>
+                <button class="modal-btn submit" onclick="submitFeedback()">提交反馈</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 安全设置模态框 -->
+    <div class="modal-overlay" id="securityModal">
+        <div class="modal-content">
+            <div class="modal-title">安全设置</div>
+            <div class="modal-input-group">
+                <label class="modal-label">修改密码</label>
+                <input type="password" class="modal-input" id="oldPassword" placeholder="请输入旧密码">
+            </div>
+            <div class="modal-input-group">
+                <input type="password" class="modal-input" id="newPassword" placeholder="请输入新密码 (6-20位)">
+            </div>
+            <div class="modal-input-group">
+                <input type="password" class="modal-input" id="confirmPassword" placeholder="请确认新密码">
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-label">登录方式管理</label>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="display: flex; align-items: center;">
+                        <input type="checkbox" id="loginPhone" checked> 手机号登录
+                    </label>
+                    <label style="display: flex; align-items: center;">
+                        <input type="checkbox" id="loginEmail" checked> 邮箱登录
+                    </label>
+                    <label style="display: flex; align-items: center;">
+                        <input type="checkbox" id="loginWechat" checked> 微信登录
+                    </label>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeSecurityModal()">取消</button>
+                <button class="modal-btn submit" onclick="saveSecuritySettings()">保存设置</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 交易记录模态框 -->
+    <div class="modal-overlay" id="transactionHistoryModal">
+        <div class="modal-content">
+            <div class="modal-title">交易记录</div>
+            <div id="transactionsList" style="max-height: 400px; overflow-y: auto;">
+                <!-- 交易记录将通过JavaScript动态生成 -->
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn submit" onclick="closeTransactionHistoryModal()">确定</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 积分规则模态框 -->
+    <div class="modal-overlay" id="pointsRulesModal">
+        <div class="modal-content">
+            <div class="modal-title">积分规则</div>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <div style="margin-bottom: 16px;">
+                    <h4 style="color: #1a3a8f; margin-bottom: 8px;">积分获取方式</h4>
+                    <ul style="color: #666; font-size: 14px; line-height: 1.6; padding-left: 20px;">
+                        <li style="margin-bottom: 6px;">初始注册：1000积分</li>
+                        <li style="margin-bottom: 6px;">实名认证：+1000积分</li>
+                        <li style="margin-bottom: 6px;">每日登录：+10积分</li>
+                        <li style="margin-bottom: 6px;">分享资源：+50积分/次（审核通过）</li>
+                        <li style="margin-bottom: 6px;">解答问题：+20-100积分/次（根据质量）</li>
+                        <li style="margin-bottom: 6px;">资源被收藏：+10积分/次</li>
+                        <li style="margin-bottom: 6px;">充值积分：按充值金额比例获取</li>
+                    </ul>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <h4 style="color: #1a3a8f; margin-bottom: 8px;">积分使用规则</h4>
+                    <ul style="color: #666; font-size: 14px; line-height: 1.6; padding-left: 20px;">
+                        <li style="margin-bottom: 6px;">下载资源：根据资源定价扣除积分</li>
+                        <li style="margin-bottom: 6px;">专家咨询：根据专家收费标准扣除积分</li>
+                        <li style="margin-bottom: 6px;">积分有效期为永久，账号注销后清零</li>
+                        <li style="margin-bottom: 6px;">充值积分不可退款，请根据需求合理充值</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn submit" onclick="closePointsRulesModal()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let userData = {};
+        let isExpert = false;
+        let todayIncome = 50;
+        let todayExpense = 10;
+        let transactions = [];
+        
+        // 等级规则定义
+        const levelRules = [
+            { level: 1, name: "新兵", minPoints: 0, maxPoints: 100 },
+            { level: 2, name: "菜鸟", minPoints: 101, maxPoints: 500 },
+            { level: 3, name: "入门", minPoints: 501, maxPoints: 1000 },
+            { level: 4, name: "熟练", minPoints: 1001, maxPoints: 3000 },
+            { level: 5, name: "高手", minPoints: 3001, maxPoints: 6000 },
+            { level: 6, name: "专家", minPoints: 6001, maxPoints: 10000 },
+            { level: 7, name: "大师", minPoints: 10001, maxPoints: 20000 },
+            { level: 8, name: "宗师", minPoints: 20001, maxPoints: 50000 },
+            { level: 9, name: "传说", minPoints: 50001, maxPoints: 999999 }
+        ];
+        
+        // 创建科技感装饰元素
+        function createTechDecoration() {
+            const decoration = document.getElementById('techDecoration');
+            const dotsCount = 30;
+            
+            for (let i = 0; i < dotsCount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'tech-dot';
+                
+                // 随机位置
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const size = 2 + Math.random() * 4;
+                const opacity = 0.1 + Math.random() * 0.2;
+                
+                dot.style.left = `${left}%`;
+                dot.style.top = `${top}%`;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                dot.style.opacity = opacity;
+                dot.style.background = `rgba(${24 + Math.random() * 100}, ${144 + Math.random() * 50}, 255, ${opacity})`;
+                
+                decoration.appendChild(dot);
+            }
+        }
+        
+
+        
+        function goToIndex() {
+            window.location.href = "index.html";
+        }
+        
+        function goToResources() {
+            window.location.href = "knowledge.html";
+        }
+        
+        function goToCommunity() {
+            window.location.href = "community.html";
+        }
+        
+        function openCollectionPage() {
+            window.location.href = "favorites.html";
+        }
+        
+        function openFollowPage() {
+            window.location.href = "subscribe.html";
+        }
+        
+        // 初始化用户数据
+        function initUserData() {
+            // 从本地存储加载用户数据
+            const savedUserData = localStorage.getItem('reliability_user');
+            if (savedUserData) {
+                userData = JSON.parse(savedUserData);
+            } else {
+                // 默认用户数据
+                userData = {
+                    id: "RE2023001",
+                    nickname: "张工程师",
+                    gender: "female",
+                    company: "华为技术有限公司",
+                    position: "可靠性设计工程师",
+                    region: "广东省深圳市",
+                    phone: "13800138000",
+                    email: "zhang@huawei.com",
+                    points: 2850,
+                    level: 4,
+                    realnameVerified: true,
+                    isExpert: false,
+                    expertLevel: null,
+                    expertFields: [],
+                    consultPrice: 0
+                };
+                
+                localStorage.setItem('reliability_user', JSON.stringify(userData));
+            }
+            
+            isExpert = userData.isExpert;
+            
+            // 初始化交易记录
+            initTransactions();
+            
+            // 更新页面显示
+            updateUserDisplay();
+            
+            // 初始化充值选项
+            initRechargeOptions();
+        }
+        
+        // 初始化交易记录
+        function initTransactions() {
+            // 从本地存储加载交易记录
+            const savedTransactions = localStorage.getItem('wallet_transactions');
+            if (savedTransactions) {
+                transactions = JSON.parse(savedTransactions);
+            } else {
+                // 默认交易记录
+                transactions = [
+                    {
+                        id: 1,
+                        title: "资源下载",
+                        description: "下载《IPC-A-610H标准》",
+                        amount: -10,
+                        type: "expense",
+                        time: "今天 10:30",
+                        icon: "📄"
+                    },
+                    {
+                        id: 2,
+                        title: "任务奖励",
+                        description: "完成每日登录任务",
+                        amount: 10,
+                        type: "income",
+                        time: "今天 09:15",
+                        icon: "🔑"
+                    },
+                    {
+                        id: 3,
+                        title: "资源下载",
+                        description: "下载《热设计指南》",
+                        amount: -20,
+                        type: "expense",
+                        time: "昨天 14:20",
+                        icon: "🔥"
+                    },
+                    {
+                        id: 4,
+                        title: "回答问题",
+                        description: "回答PCB设计问题",
+                        amount: 30,
+                        type: "income",
+                        time: "昨天 11:45",
+                        icon: "💬"
+                    },
+                    {
+                        id: 5,
+                        title: "充值积分",
+                        description: "微信充值",
+                        amount: 500,
+                        type: "income",
+                        time: "前天 16:30",
+                        icon: "💰"
+                    }
+                ];
+                
+                localStorage.setItem('wallet_transactions', JSON.stringify(transactions));
+            }
+        }
+        
+        // 更新用户显示
+        function updateUserDisplay() {
+            // 更新用户基本信息
+            document.getElementById('userAvatar').textContent = userData.nickname.substring(0, 1);
+            document.getElementById('userName').textContent = userData.nickname;
+            
+            // 更新积分显示
+            document.getElementById('userPoints').textContent = userData.points.toLocaleString();
+            
+            // 更新今日收支显示
+            document.getElementById('dailyIncome').textContent = `+${todayIncome}`;
+            document.getElementById('dailyExpense').textContent = `-${todayExpense}`;
+            
+            // 更新等级显示
+            const levelInfo = getLevelInfo(userData.points);
+            document.getElementById('userLevel').textContent = levelInfo.name;
+            
+            // 更新进度条
+            const progressPercentage = ((userData.points - levelInfo.minPoints) / (levelInfo.maxPoints - levelInfo.minPoints)) * 100;
+            document.getElementById('levelProgressFill').style.width = `${progressPercentage}%`;
+            
+            // 更新实名认证状态
+            const realnameBadge = document.getElementById('realnameBadge');
+            if (userData.realnameVerified) {
+                realnameBadge.textContent = "已认证";
+                realnameBadge.className = "realname-badge";
+            } else {
+                realnameBadge.textContent = "未认证";
+                realnameBadge.className = "realname-badge realname-unverified";
+            }
+            
+            // 更新专家信息
+            updateExpertDisplay();
+        }
+        
+        // 获取等级信息
+        function getLevelInfo(points) {
+            for (let i = 0; i < levelRules.length; i++) {
+                if (points >= levelRules[i].minPoints && points <= levelRules[i].maxPoints) {
+                    return {
+                        level: levelRules[i].level,
+                        name: levelRules[i].name,
+                        minPoints: levelRules[i].minPoints,
+                        maxPoints: levelRules[i].maxPoints
+                    };
+                }
+            }
+            return levelRules[levelRules.length - 1];
+        }
+        
+        // 更新专家显示
+        function updateExpertDisplay() {
+            const expertBadge = document.getElementById('expertBadge');
+            const expertInfo = document.getElementById('expertInfo');
+            const expertActions = document.getElementById('expertActions');
+            const applyBtn = expertActions.querySelector('.apply');
+            const settingsBtn = expertActions.querySelector('.settings');
+            
+            if (userData.isExpert) {
+                // 专家用户
+                let expertLevelText = "";
+                switch(userData.expertLevel) {
+                    case "bronze": expertLevelText = "初级专家"; break;
+                    case "silver": expertLevelText = "中级专家"; break;
+                    case "gold": expertLevelText = "高级专家"; break;
+                }
+                
+                expertBadge.textContent = expertLevelText;
+                expertBadge.style.background = userData.expertLevel === "gold" ? "#ffa940" : 
+                                             (userData.expertLevel === "silver" ? "#d9d9d9" : "#d46b08");
+                
+                expertInfo.textContent = `您是${expertLevelText}，专长领域：${userData.expertFields.join('、')}。咨询收费：${userData.consultPrice}积分/30分钟。`;
+                
+                applyBtn.style.display = "none";
+                settingsBtn.style.display = "block";
+            } else {
+                // 普通用户
+                expertBadge.textContent = "普通用户";
+                expertBadge.style.background = "#d9d9d9";
+                
+                expertInfo.textContent = "您目前是普通用户。成为专家后可以设置咨询收费，解答他人问题获得积分，提升行业影响力。";
+                
+                applyBtn.style.display = "block";
+                settingsBtn.style.display = "none";
+            }
+        }
+        
+        // 初始化充值选项
+        function initRechargeOptions() {
+            const pointsOptions = [
+                { amount: 100, price: 10, bonus: 0 },
+                { amount: 500, price: 48, bonus: 20 },
+                { amount: 1000, price: 88, bonus: 50 },
+                { amount: 2000, price: 168, bonus: 120 },
+                { amount: 5000, price: 388, bonus: 350 },
+                { amount: 10000, price: 688, bonus: 800 }
+            ];
+            
+            const container = document.getElementById('pointsOptions');
+            container.innerHTML = '';
+            
+            pointsOptions.forEach(option => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'points-option';
+                optionEl.onclick = () => selectRechargeOption(optionEl, option.amount);
+                
+                optionEl.innerHTML = `
+                    <div class="points-amount">${option.amount}积分</div>
+                    <div class="points-price">¥${option.price}</div>
+                    ${option.bonus > 0 ? `<div class="points-bonus">赠送${option.bonus}积分</div>` : ''}
+                `;
+                
+                container.appendChild(optionEl);
+            });
+        }
+        
+        // 选择充值选项
+        function selectRechargeOption(element, amount) {
+            // 移除所有选项的选中状态
+            document.querySelectorAll('.points-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // 设置当前选项为选中状态
+            element.classList.add('selected');
+            
+            // 保存选中的充值金额
+            window.selectedRechargeAmount = amount;
+        }
+        
+        // 打开编辑资料模态框
+        function openEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'flex';
+            
+            // 填充当前数据
+            document.getElementById('editNickname').value = userData.nickname;
+            document.getElementById('editGender').value = userData.gender;
+            document.getElementById('editCompany').value = userData.company;
+            document.getElementById('editPosition').value = userData.position;
+            document.getElementById('editRegion').value = userData.region;
+            document.getElementById('editPhone').value = userData.phone;
+            document.getElementById('editEmail').value = userData.email;
+        }
+        
+        // 关闭编辑资料模态框
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+        
+        // 保存个人资料
+        function saveProfile() {
+            // 获取表单数据
+            userData.nickname = document.getElementById('editNickname').value;
+            userData.gender = document.getElementById('editGender').value;
+            userData.company = document.getElementById('editCompany').value;
+            userData.position = document.getElementById('editPosition').value;
+            userData.region = document.getElementById('editRegion').value;
+            userData.phone = document.getElementById('editPhone').value;
+            userData.email = document.getElementById('editEmail').value;
+            
+            // 保存到本地存储
+            localStorage.setItem('reliability_user', JSON.stringify(userData));
+            
+            // 更新显示
+            updateUserDisplay();
+            
+            // 关闭模态框
+            closeEditProfileModal();
+            
+            alert('个人资料已保存！');
+        }
+        
+        // 打开充值积分模态框
+        function openRechargeModal() {
+            document.getElementById('rechargeModal').style.display = 'flex';
+        }
+        
+        // 关闭充值积分模态框
+        function closeRechargeModal() {
+            document.getElementById('rechargeModal').style.display = 'none';
+        }
+        
+        // 确认充值
+        function confirmRecharge() {
+            const amount = window.selectedRechargeAmount;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            
+            if (!amount) {
+                alert('请选择充值金额');
+                return;
+            }
+            
+            // 计算实际获得的积分（包括赠送）
+            let actualAmount = amount;
+            if (amount === 500) actualAmount = 520;
+            else if (amount === 1000) actualAmount = 1050;
+            else if (amount === 2000) actualAmount = 2120;
+            else if (amount === 5000) actualAmount = 5350;
+            else if (amount === 10000) actualAmount = 10800;
+            
+            // 模拟支付成功
+            alert(`支付成功！\n\n充值金额：${amount}积分\n实际到账：${actualAmount}积分\n支付方式：${getPaymentMethodName(paymentMethod)}\n\n积分已添加到您的账户。`);
+            
+            // 更新用户积分
+            userData.points += actualAmount;
+            todayIncome += actualAmount;
+            
+            // 保存到本地存储
+            localStorage.setItem('reliability_user', JSON.stringify(userData));
+            
+            // 添加交易记录
+            const newTransaction = {
+                id: Date.now(),
+                title: "充值积分",
+                description: `${getPaymentMethodName(paymentMethod)}充值`,
+                amount: actualAmount,
+                type: "income",
+                time: "刚刚",
+                icon: "💰"
+            };
+            
+            transactions.unshift(newTransaction);
+            localStorage.setItem('wallet_transactions', JSON.stringify(transactions));
+            
+            // 更新显示
+            updateUserDisplay();
+            
+            // 关闭模态框
+            closeRechargeModal();
+        }
+        
+        // 获取支付方式名称
+        function getPaymentMethodName(method) {
+            switch(method) {
+                case 'wechat': return '微信支付';
+                case 'alipay': return '支付宝';
+                case 'bank': return '银行卡';
+                default: return '未知支付方式';
+            }
+        }
+        
+        // 打开申请专家模态框
+        function openApplyExpertModal() {
+            document.getElementById('applyExpertModal').style.display = 'flex';
+        }
+        
+        // 关闭申请专家模态框
+        function closeApplyExpertModal() {
+            document.getElementById('applyExpertModal').style.display = 'none';
+        }
+        
+        // 提交专家申请
+        function submitExpertApplication() {
+            const intro = document.getElementById('expertIntro').value;
+            const level = document.getElementById('expertLevel').value;
+            const price = parseInt(document.getElementById('consultPrice').value);
+            
+            if (!intro.trim()) {
+                alert('请填写专家介绍');
+                return;
+            }
+            
+            // 检查积分是否足够
+            let costPoints = 0;
+            switch(level) {
+                case 'bronze': costPoints = 500; break;
+                case 'silver': costPoints = 1000; break;
+                case 'gold': costPoints = 2000; break;
+            }
+            
+            if (userData.points < costPoints) {
+                alert(`积分不足！申请${level === 'bronze' ? '初级' : level === 'silver' ? '中级' : '高级'}专家需要${costPoints}积分，您当前只有${userData.points}积分。`);
+                return;
+            }
+            
+            // 模拟申请提交
+            alert(`专家申请已提交！\n\n申请等级：${level === 'bronze' ? '初级专家' : level === 'silver' ? '中级专家' : '高级专家'}\n消耗积分：${costPoints}\n咨询收费：${price}积分/30分钟\n\n申请将在1-3个工作日内审核，审核通过后您将获得专家身份。`);
+            
+            // 扣除积分
+            userData.points -= costPoints;
+            todayExpense += costPoints;
+            
+            // 添加交易记录
+            const newTransaction = {
+                id: Date.now(),
+                title: "申请专家",
+                description: `申请${level === 'bronze' ? '初级' : level === 'silver' ? '中级' : '高级'}专家`,
+                amount: -costPoints,
+                type: "expense",
+                time: "刚刚",
+                icon: "👨‍🔬"
+            };
+            
+            transactions.unshift(newTransaction);
+            localStorage.setItem('wallet_transactions', JSON.stringify(transactions));
+            
+            // 设置专家信息（模拟审核通过）
+            userData.isExpert = true;
+            userData.expertLevel = level;
+            userData.expertFields = ['PCB设计与可靠性', '热管理与散热设计']; // 模拟专长领域
+            userData.consultPrice = price;
+            
+            // 保存到本地存储
+            localStorage.setItem('reliability_user', JSON.stringify(userData));
+            
+            // 更新显示
+            updateUserDisplay();
+            
+            // 关闭模态框
+            closeApplyExpertModal();
+        }
+        
+        // 打开专家设置
+        function openExpertSettings() {
+            alert('在实际应用中，这里会打开专家设置页面，可以修改咨询收费、专长领域等设置。');
+        }
+        
+        // 打开反馈建议模态框
+        function openFeedbackModal() {
+            document.getElementById('feedbackModal').style.display = 'flex';
+        }
+        
+        // 关闭反馈建议模态框
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').style.display = 'none';
+        }
+        
+        // 提交反馈
+        function submitFeedback() {
+            const type = document.getElementById('feedbackType').value;
+            const content = document.getElementById('feedbackContent').value;
+            const contact = document.getElementById('feedbackContact').value;
+            
+            if (!content.trim()) {
+                alert('请填写反馈内容');
+                return;
+            }
+            
+            // 模拟提交成功
+            alert(`反馈提交成功！\n\n感谢您的反馈，我们将认真考虑您的建议并不断优化系统。\n${contact ? `我们会通过${contact}与您联系。` : ''}`);
+            
+            // 关闭模态框
+            closeFeedbackModal();
+            
+            // 清空表单
+            document.getElementById('feedbackContent').value = '';
+            document.getElementById('feedbackContact').value = '';
+        }
+        
+        // 打开安全设置模态框
+        function openSecuritySettings() {
+            document.getElementById('securityModal').style.display = 'flex';
+        }
+        
+        // 关闭安全设置模态框
+        function closeSecurityModal() {
+            document.getElementById('securityModal').style.display = 'none';
+        }
+        
+        // 保存安全设置
+        function saveSecuritySettings() {
+            const oldPassword = document.getElementById('oldPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // 检查密码是否匹配
+            if (newPassword !== confirmPassword) {
+                alert('两次输入的新密码不一致');
+                return;
+            }
+            
+            // 检查密码长度
+            if (newPassword && (newPassword.length < 6 || newPassword.length > 20)) {
+                alert('新密码长度必须在6-20位之间');
+                return;
+            }
+            
+            // 模拟保存成功
+            alert('安全设置已保存！');
+            
+            // 关闭模态框
+            closeSecurityModal();
+            
+            // 清空表单
+            document.getElementById('oldPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+        
+        // 打开实名认证
+        function openRealnameAuth() {
+            if (userData.realnameVerified) {
+                alert('您已完成实名认证！');
+            } else {
+                const confirmAuth = confirm('进行实名认证可获得1000积分奖励！\n\n认证需要提供真实姓名和身份证号，信息将严格保密。\n是否现在进行实名认证？');
+                
+                if (confirmAuth) {
+                    // 模拟认证成功
+                    alert('实名认证成功！\n\n您已获得1000积分奖励。');
+                    
+                    // 更新用户数据
+                    userData.realnameVerified = true;
+                    userData.points += 1000;
+                    todayIncome += 1000;
+                    
+                    // 添加交易记录
+                    const newTransaction = {
+                        id: Date.now(),
+                        title: "实名认证",
+                        description: "完成实名认证奖励",
+                        amount: 1000,
+                        type: "income",
+                        time: "刚刚",
+                        icon: "🆔"
+                    };
+                    
+                    transactions.unshift(newTransaction);
+                    localStorage.setItem('wallet_transactions', JSON.stringify(transactions));
+                    
+                    // 保存到本地存储
+                    localStorage.setItem('reliability_user', JSON.stringify(userData));
+                    
+                    // 更新显示
+                    updateUserDisplay();
+                }
+            }
+        }
+        
+        // 打开交易记录
+        function openTransactionHistory() {
+            const container = document.getElementById('transactionsList');
+            container.innerHTML = '';
+            
+            if (transactions.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: #999;">暂无交易记录</div>';
+            } else {
+                transactions.forEach(transaction => {
+                    const transactionEl = document.createElement('div');
+                    transactionEl.className = `transaction-item transaction-${transaction.type}`;
+                    
+                    transactionEl.innerHTML = `
+                        <div class="transaction-icon">${transaction.icon}</div>
+                        <div class="transaction-info">
+                            <div class="transaction-title">${transaction.title}</div>
+                            <div class="transaction-time">${transaction.time}</div>
+                        </div>
+                        <div class="transaction-amount">
+                            ${transaction.type === 'income' ? '+' : ''}${transaction.amount}
+                        </div>
+                    `;
+                    
+                    container.appendChild(transactionEl);
+                });
+            }
+            
+            document.getElementById('transactionHistoryModal').style.display = 'flex';
+        }
+        
+        // 关闭交易记录模态框
+        function closeTransactionHistoryModal() {
+            document.getElementById('transactionHistoryModal').style.display = 'none';
+        }
+        
+        // 打开积分规则
+        function openPointsRules() {
+            document.getElementById('pointsRulesModal').style.display = 'flex';
+        }
+        
+        // 关闭积分规则模态框
+        function closePointsRulesModal() {
+            document.getElementById('pointsRulesModal').style.display = 'none';
+        }
+        
+        // 打开等级规则
+        function openLevelRules() {
+            let rulesText = "等级规则：\n\n";
+            levelRules.forEach(rule => {
+                rulesText += `${rule.level}. ${rule.name}: ${rule.minPoints} - ${rule.maxPoints}积分\n`;
+            });
+            
+            alert(rulesText);
+        }
+        
+        // 打开我的问答
+        function openMyQuestions() {
+            alert('在实际应用中，这里会跳转到我的问答页面，展示我发起和回答的问题。');
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = function() {
+            // 创建科技感装饰元素
+            createTechDecoration();
+            
+            // 初始化用户数据
+            initUserData();
+            
+            // 点击模态框外部关闭
+            const modals = [
+                'editProfileModal', 'rechargeModal', 'applyExpertModal', 
+                'feedbackModal', 'securityModal', 'transactionHistoryModal',
+                'pointsRulesModal'
+            ];
+            
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === this) {
+                            this.style.display = 'none';
+                        }
+                    });
+                }
+            });
+        };
+    </script>
+</body>
+</html>

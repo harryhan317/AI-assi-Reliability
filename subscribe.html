@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我的关注 - 可靠性AI助手</title>
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+            background-color: #f8fafd;
+            color: #333;
+            line-height: 1.5;
+            max-width: 390px;
+            margin: 0 auto;
+            min-height: 844px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 科技感装饰元素 */
+        .tech-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tech-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(24, 144, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            height: 44px;
+            padding: 0 16px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+            position: relative;
+        }
+        
+        .back-btn {
+            position: absolute;
+            left: 16px;
+            font-size: 20px;
+            color: #1890ff;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(24, 144, 255, 0.1);
+        }
+        
+        .navbar-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            height: calc(100vh - 94px);
+            padding: 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 筛选器区域 */
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 12px;
+        }
+        
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .filter-tag {
+            padding: 6px 12px;
+            background: #f0f9ff;
+            border: 1px solid #e6f7ff;
+            border-radius: 16px;
+            font-size: 13px;
+            color: #1890ff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-tag.active {
+            background: #1890ff;
+            color: white;
+        }
+        
+        .filter-tag:hover {
+            background: #e6f7ff;
+        }
+        
+        /* 关注列表 */
+        .subscribe-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .subscribe-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .subscribe-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subscribe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .subscribe-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a8f;
+            line-height: 1.4;
+            flex: 1;
+            margin-right: 12px;
+        }
+        
+        .subscribe-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .subscribe-action {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .subscribe-share {
+            background: #f0f9ff;
+            color: #1890ff;
+        }
+        
+        .subscribe-share:hover {
+            background: #e6f7ff;
+        }
+        
+        .subscribe-unfollow {
+            background: #fff2f0;
+            color: #ff4d4f;
+        }
+        
+        .subscribe-unfollow:hover {
+            background: #ffe6e6;
+        }
+        
+        .subscribe-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .subscribe-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .subscribe-type {
+            background: #f6ffed;
+            color: #52c41a;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .subscribe-date {
+            font-size: 11px;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+        
+        .empty-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #999;
+            margin-bottom: 8px;
+        }
+        
+        .empty-desc {
+            font-size: 14px;
+            color: #ccc;
+            line-height: 1.5;
+        }
+        
+        /* 底部导航栏 */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            height: 50px;
+            background-color: #ffffff;
+            display: flex;
+            border-top: 1px solid #e5e5e5;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #999;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .tab-item.active {
+            color: #1890ff;
+        }
+        
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .home-icon {
+            color: #999;
+        }
+        
+        .resources-icon {
+            color: #999;
+        }
+        
+        .community-icon {
+            color: #999;
+        }
+        
+        .profile-icon {
+            color: #1890ff;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 科技感装饰元素 -->
+        <div class="tech-decoration" id="techDecoration"></div>
+        
+        <!-- 顶部导航栏 -->
+        <div class="navbar">
+            <div class="back-btn" onclick="goBack()">‹</div>
+            <div class="navbar-title">我的关注</div>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="main-content" id="mainContent">
+            <!-- 筛选器区域 -->
+            <div class="filter-section">
+                <div class="filter-title">关注类型</div>
+                <div class="filter-tags">
+                    <div class="filter-tag active" onclick="filterSubscribes('all')">全部</div>
+                    <div class="filter-tag" onclick="filterSubscribes('expert')">专家</div>
+                    <div class="filter-tag" onclick="filterSubscribes('topic')">话题</div>
+                    <div class="filter-tag" onclick="filterSubscribes('resource')">资源</div>
+                </div>
+            </div>
+            
+            <!-- 关注列表 -->
+            <div class="subscribe-list" id="subscribeList">
+                <!-- 关注列表将通过JavaScript动态生成 -->
+            </div>
+            
+            <!-- 空状态 -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">👁</div>
+                <div class="empty-title">暂无关注内容</div>
+                <div class="empty-desc">您还没有关注任何内容，快去发现感兴趣的内容吧！</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+        <div class="tab-item" onclick="goToIndex()">
+            <div class="tab-icon home-icon">🏠</div>
+            <div>首页</div>
+        </div>
+        <div class="tab-item" onclick="goToResources()">
+            <div class="tab-icon resources-icon">📚</div>
+            <div>资源</div>
+        </div>
+        <div class="tab-item" onclick="goToCommunity()">
+            <div class="tab-icon community-icon">👥</div>
+            <div>社区</div>
+        </div>
+        <div class="tab-item active" onclick="goToProfile()">
+            <div class="tab-icon profile-icon">👤</div>
+            <div>我的</div>
+        </div>
+    </div>
+
+    <script>
+        // 示例关注数据
+        const sampleSubscribes = [
+            {
+                id: 1,
+                title: "可靠性工程专家 - 张工",
+                content: "专注于电子产品可靠性设计、测试与优化，拥有15年行业经验，擅长FMEA分析和可靠性预测。",
+                type: "expert",
+                date: "2024-01-15",
+                followers: "1.2K"
+            },
+            {
+                id: 2,
+                title: "AI在可靠性工程中的应用",
+                content: "探讨人工智能技术在可靠性预测、故障诊断和优化设计中的最新进展和应用案例。",
+                type: "topic",
+                date: "2024-01-12",
+                discussions: "356"
+            },
+            {
+                id: 3,
+                title: "可靠性测试标准库",
+                content: "包含国内外主要可靠性测试标准、规范和方法，持续更新最新的行业标准和技术要求。",
+                type: "resource",
+                date: "2024-01-10",
+                downloads: "2.4K"
+            },
+            {
+                id: 4,
+                title: "失效分析技术讨论",
+                content: "分享失效分析案例、技术方法和实践经验，帮助工程师快速定位和解决产品可靠性问题。",
+                type: "topic",
+                date: "2024-01-08",
+                discussions: "189"
+            },
+            {
+                id: 5,
+                title: "热管理专家 - 李工",
+                content: "专注于电子产品热设计、散热分析和热可靠性优化，在热管理领域有丰富实践经验。",
+                type: "expert",
+                date: "2024-01-05",
+                followers: "890"
+            }
+        ];
+        
+        // 初始化页面
+        function initPage() {
+            generateTechDecoration();
+            loadSubscribes();
+        }
+        
+        // 加载关注列表
+        function loadSubscribes() {
+            const subscribeList = document.getElementById('subscribeList');
+            const emptyState = document.getElementById('emptyState');
+            
+            // 从本地存储获取关注数据，如果没有则使用示例数据
+            let subscribes = JSON.parse(localStorage.getItem('subscribes')) || sampleSubscribes;
+            
+            if (subscribes.length === 0) {
+                subscribeList.style.display = 'none';
+                emptyState.style.display = 'flex';
+                return;
+            }
+            
+            subscribeList.style.display = 'flex';
+            emptyState.style.display = 'none';
+            subscribeList.innerHTML = '';
+            
+            subscribes.forEach(subscribe => {
+                const subscribeItem = createSubscribeItem(subscribe);
+                subscribeList.appendChild(subscribeItem);
+            });
+        }
+        
+        // 创建关注项
+        function createSubscribeItem(subscribe) {
+            const item = document.createElement('div');
+            item.className = 'subscribe-item';
+            
+            const typeLabels = {
+                'expert': '专家',
+                'topic': '话题',
+                'resource': '资源'
+            };
+            
+            const metaInfo = subscribe.type === 'expert' ? 
+                `粉丝: ${subscribe.followers}` : 
+                subscribe.type === 'topic' ? 
+                `讨论: ${subscribe.discussions}` : 
+                `下载: ${subscribe.downloads}`;
+            
+            item.innerHTML = `
+                <div class="subscribe-header">
+                    <div class="subscribe-title">${subscribe.title}</div>
+                    <div class="subscribe-actions">
+                        <div class="subscribe-action subscribe-share" onclick="shareSubscribe(${subscribe.id})" title="分享">↗</div>
+                        <div class="subscribe-action subscribe-unfollow" onclick="unfollowSubscribe(${subscribe.id})" title="取消关注">×</div>
+                    </div>
+                </div>
+                <div class="subscribe-content">${subscribe.content}</div>
+                <div class="subscribe-meta">
+                    <div class="subscribe-type">${typeLabels[subscribe.type] || subscribe.type}</div>
+                    <div class="subscribe-date">${subscribe.date} | ${metaInfo}</div>
+                </div>
+            `;
+            
+            return item;
+        }
+        
+        // 筛选关注
+        function filterSubscribes(type) {
+            const tags = document.querySelectorAll('.filter-tag');
+            tags.forEach(tag => tag.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 实际应用中这里会根据类型筛选数据
+            // 这里简化处理，重新加载所有关注
+            loadSubscribes();
+        }
+        
+        // 取消关注
+        function unfollowSubscribe(id) {
+            if (confirm('确定要取消关注吗？')) {
+                let subscribes = JSON.parse(localStorage.getItem('subscribes')) || sampleSubscribes;
+                subscribes = subscribes.filter(subscribe => subscribe.id !== id);
+                localStorage.setItem('subscribes', JSON.stringify(subscribes));
+                loadSubscribes();
+            }
+        }
+        
+        // 分享关注
+        function shareSubscribe(id) {
+            alert('在实际应用中，这里会调用分享功能');
+        }
+        
+        // 生成科技感装饰元素
+        function generateTechDecoration() {
+            const container = document.getElementById('techDecoration');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 30; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'tech-dot';
+                dot.style.left = Math.random() * 100 + '%';
+                dot.style.top = Math.random() * 100 + '%';
+                dot.style.opacity = Math.random() * 0.3 + 0.1;
+                container.appendChild(dot);
+            }
+        }
+        
+        // 导航函数
+        function goBack() {
+            window.location.href = 'profile.html';
+        }
+        
+        function goToIndex() {
+            window.location.href = 'index.html';
+        }
+        
+        function goToResources() {
+            window.location.href = 'resources.html';
+        }
+        
+        function goToCommunity() {
+            window.location.href = 'community.html';
+        }
+        
+        function goToProfile() {
+            window.location.href = 'profile.html';
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
